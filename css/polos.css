@@ -23,13 +23,22 @@
  * https://www.w3schools.com/cssref/css3_pr_align-items.php
  * https://www.w3schools.com/cssref/css3_pr_justify-content.php
  */
-.rt-awl {}
-.rt-tga {}
-.rt-akr {}
-.rt-ata {
-  display:flex;justify-content:space-between;
+.rt-awl {
+  display:flex;
+  justify-content:flex-start;
 }
-
+.rt-tga {
+  display:flex;
+  justify-content:center;
+}
+.rt-akr {
+  display:flex;
+  justify-content:flex-end;
+}
+.rt-ata {
+  display:flex;
+  justify-content:space-between;
+}
 .lmn-bd{
   padding:.75rem 1.25rem
 }
