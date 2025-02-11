@@ -50,7 +50,6 @@
 /*!
  * Huruf (Ukuran Huruf)
  */
-
 p {
 	font-size:clamp(16px, 5vw, 18px);
 	line-height:1.5
@@ -72,4 +71,11 @@ p {
 .h6,h6{
 	font-size:clamp(15px, 5vw, 24px);
 	line-height:1.3
+}
+
+/*!
+ * HP
+ */
+@media (min-width: 0) and (max-width: 575.98px) {
+	// class
 }
