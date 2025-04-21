@@ -72,7 +72,15 @@ p {
 	font-size:clamp(15px, 5vw, 24px);
 	line-height:1.3
 }
-
+/*!
+ * Warna
+ */
+.biru1{
+	color:#003ec4;
+}
+.biru2{
+	color:#003ece;
+}
 /*!
  * HP
  */
