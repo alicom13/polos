@@ -48,6 +48,25 @@
   border-top:1px solid rgba(0,0,0,.125)
 }
 /*!
+ * pl-box
+ * Demo : https://codepen.io/alicom13/pen/EaadRWd
+ */
+.pl-box{
+	display:flex;
+	flex-wrap: wrap;
+	gap:.75em;
+}
+.bx-itm{
+	padding:.75em;
+	min-width:5rem;
+	min-height:5rem;
+	border:1px solid #f1f1f1;
+	border-radius:.5em;
+	/*0.5px = 0.031*/
+	box-shadow:0.031em 0.031em;
+}
+
+/*!
  * Huruf (Ukuran Huruf)
  */
 p {
