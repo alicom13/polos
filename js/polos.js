@@ -3,16 +3,14 @@
  * Copyright 2025 Polos Style
  * Unlicensed
  */
-
-/* Mulai $( document ).ready()
-$(function() {
-    console.log( "polos ready!" );
+/*!
+ * Polos Jquery
+ */
+$(document).ready(function(){
+    colsole.log( "Polos Style" );
+    if( $(window).width() < 576px ){
+        // Fungsi Layar Sempit
+    } else {
+        // Fungsi Layar Lebar
+    }
 });
-*/
-// Jika window kurang dari 576px
-if($(window).width() < 576px)
-{
-  // Fungsi untuk layar kecil
-} else {
-  // Funsi untuk layar lebar
-}
