@@ -119,9 +119,16 @@ p {
 .t-tm{}
 .t-ts{}
 
-/*!
- * HP
- */
+/*Media Queries*/
+@media (min-width:768px){
+	.t-tl{display:block}
+	.s-sl{display:none}
+}
+@media (576px <= width <= 767.98px ){
+	.t-tm{display:block}
+	.s-sm{display:none}
+}
 @media (min-width: 0) and (max-width: 575.98px) {
-	// class
+	.t-ts{display:block}
+	.s-ss{display:none}
 }
