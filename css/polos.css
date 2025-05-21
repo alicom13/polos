@@ -113,6 +113,13 @@ p {
 .s-ss{}
 
 /*!
+ * terang-terangan (display:block)
+ */
+.t-tl{}
+.t-tm{}
+.t-ts{}
+
+/*!
  * HP
  */
 @media (min-width: 0) and (max-width: 575.98px) {
