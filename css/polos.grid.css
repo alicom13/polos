@@ -1,0 +1,147 @@
+/*!
+ * Polos v1.1 - Modern CSS Grid System
+ * Features: 12-Column Grid, Responsive Breakpoints, Auto Columns, Minmax Protection
+ * Class Prefix: c- (cl-, cm-, cs-) for no conflict with other frameworks
+ * Breakpoints: Large (≥768px), Medium (576px-767.98px), Small (≤575.98px)
+ * Licensed under Unlicense - Free for any use
+ * https://waliweb.com/
+ */
+
+/* ==================== */
+/* CORE GRID CONTAINER */
+/* ==================== */
+.rw {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(80px, 1fr));
+    gap: 16px;
+    counter-reset: div;
+}
+
+.rw > .div {
+    border: 1px solid #e0e0e0;
+    padding: 15px;
+}
+
+.rw div:before {
+    counter-increment: div;
+}
+
+.rw div[class]:after {
+    display: block;
+}
+
+/* ==================== */
+/* C-AUTO COLUMN SYSTEM */
+/* ==================== */
+.c-auto {
+    grid-column: auto / span 999;
+    min-width: 0;
+}
+
+/* ==================== */
+/* AUTO-FIT & AUTO-FILL */
+/* ==================== */
+.rw.auto-fit {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+.rw.auto-fill {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+}
+
+/* Auto-fit/fill responsive adjustments */
+@media (576px <= width <= 767.98px) {
+    .rw.auto-fit {
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    }
+    .rw.auto-fill {
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    }
+}
+
+@media (max-width: 575.98px) {
+    .rw.auto-fit {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    }
+    .rw.auto-fill {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    }
+}
+
+/* ==================== */
+/* DISPLAY HELPERS */
+/* ==================== */
+.s-sl{display:none}
+.s-sm{display:none}
+.s-ss{display:none}
+.t-tl{display:block}
+.t-tm{display:block}
+.t-ts{display:block}
+
+/* ==================== */
+/* LARGE SCREENS (≥768px) */
+/* ==================== */
+.cl-1 { grid-column: auto / span 1; min-width: 0; }
+.cl-2 { grid-column: auto / span 2; min-width: 0; }
+.cl-3 { grid-column: auto / span 3; min-width: 0; }
+.cl-4 { grid-column: auto / span 4; min-width: 0; }
+.cl-5 { grid-column: auto / span 5; min-width: 0; }
+.cl-6 { grid-column: auto / span 6; min-width: 0; }
+.cl-7 { grid-column: auto / span 7; min-width: 0; }
+.cl-8 { grid-column: auto / span 8; min-width: 0; }
+.cl-9 { grid-column: auto / span 9; min-width: 0; }
+.cl-10 { grid-column: auto / span 10; min-width: 0; }
+.cl-11 { grid-column: auto / span 11; min-width: 0; }
+.cl-12 { grid-column: auto / span 12; min-width: 0; }
+
+/* ==================== */
+/* MEDIUM SCREENS (576px - 767.98px) */
+/* ==================== */
+@media (576px <= width <= 767.98px) {
+    .cm-1 { grid-column: auto / span 1; }
+    .cm-2 { grid-column: auto / span 2; }
+    .cm-3 { grid-column: auto / span 3; }
+    .cm-4 { grid-column: auto / span 4; }
+    .cm-5 { grid-column: auto / span 5; }
+    .cm-6 { grid-column: auto / span 6; }
+    .cm-7 { grid-column: auto / span 7; }
+    .cm-8 { grid-column: auto / span 8; }
+    .cm-9 { grid-column: auto / span 9; }
+    .cm-10 { grid-column: auto / span 10; }
+    .cm-11 { grid-column: auto / span 11; }
+    .cm-12 { grid-column: auto / span 12; }
+}
+
+/* ==================== */
+/* SMALL SCREENS (≤575.98px) */
+/* ==================== */
+@media (max-width: 575.98px) {
+    .cs-1 { grid-column: auto / span 1; }
+    .cs-2 { grid-column: auto / span 2; }
+    .cs-3 { grid-column: auto / span 3; }
+    .cs-4 { grid-column: auto / span 4; }
+    .cs-5 { grid-column: auto / span 5; }
+    .cs-6 { grid-column: auto / span 6; }
+    .cs-7 { grid-column: auto / span 7; }
+    .cs-8 { grid-column: auto / span 8; }
+    .cs-9 { grid-column: auto / span 9; }
+    .cs-10 { grid-column: auto / span 10; }
+    .cs-11 { grid-column: auto / span 11; }
+    .cs-12 { grid-column: auto / span 12; }
+}
+
+/* ==================== */
+/* UTILITY CLASSES */
+/* ==================== */
+.rw.no-gap { gap: 0; }
+.rw.small-gap { gap: 8px; }
+.rw.large-gap { gap: 24px; }
+
+.rw.align-start { align-items: start; }
+.rw.align-center { align-items: center; }
+.rw.align-end { align-items: end; }
+
+.rw.justify-start { justify-items: start; }
+.rw.justify-center { justify-items: center; }
+.rw.justify-end { justify-items: end; }
+.rw.justify-stretch { justify-items: stretch; }
