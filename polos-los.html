@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Polos Framework</title>
+    <style>
+        /* Reset dan Base Styles */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: #f8fafc;
+            line-height: 1.6;
+            color: #334155;
+        }
+        
+        /* Layout Container */
+        .dashboard-layout {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            min-height: 100vh;
+        }
+        
+        /* Sidebar Styles */
+        .sidebar {
+            background: #1e293b;
+            color: white;
+            padding: 1.5rem 1rem;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+        }
+        
+        .sidebar-logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 2rem;
+            text-align: center;
+            color: #60a5fa;
+        }
+        
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            color: #cbd5e1;
+            text-decoration: none;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .sidebar-nav a:hover, 
+        .sidebar-nav a.active {
+            background: #334155;
+            color: white;
+        }
+        
+        .sidebar-nav a.active {
+            background: #3b82f6;
+        }
+        
+        /* Main Content Area */
+        .main-content {
+            padding: 1.5rem;
+            overflow-y: auto;
+            background: #f8fafc;
+        }
+        
+        /* Utility Classes untuk Demo */
+        .text-sm { font-size: 0.875rem; }
+        .text-lg { font-size: 1.125rem; }
+        .text-xl { font-size: 1.25rem; }
+        .text-2xl { font-size: 1.5rem; }
+        .font-bold { font-weight: bold; }
+        .mb-1 { margin-bottom: 0.5rem; }
+        .mb-2 { margin-bottom: 1rem; }
+        .mb-3 { margin-bottom: 1.5rem; }
+        .mt-2 { margin-top: 1rem; }
+        .mt-3 { margin-top: 1.5rem; }
+        .p-3 { padding: 1rem; }
+        
+        /* Custom Styles untuk Demo */
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #3b82f6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            line-height: 1;
+        }
+        
+        .progress-bar {
+            height: 6px;
+            background: #e2e8f0;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 0.5rem;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: #10b981;
+            border-radius: 3px;
+        }
+    </style>
+    
+    <!-- Polos Framework CSS -->
+    <style>
+        /* Semua CSS Polos Framework dari sebelumnya */
+    </style>
+</head>
+<body>
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-logo">POLOS ADMIN</div>
+            <nav class="sidebar-nav">
+                <a href="#" class="active">
+                    <span>📊</span> Dashboard
+                </a>
+                <a href="#">
+                    <span>👥</span> Users
+                </a>
+                <a href="#">
+                    <span>📦</span> Products
+                </a>
+                <a href="#">
+                    <span>🛒</span> Orders
+                </a>
+                <a href="#">
+                    <span>📈</span> Analytics
+                </a>
+                <a href="#">
+                    <span>⚙️</span> Settings
+                </a>
+                <a href="#">
+                    <span>🚪</span> Logout
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <div class="lmn lmn-plain mb-3">
+                <div class="lmn-hd pt-between">
+                    <div>
+                        <h1>Dashboard Overview</h1>
+                        <p class="abu2">Welcome back, Admin! Here's what's happening today.</p>
+                    </div>
+                    <div class="pt-center">
+                        <div class="user-avatar">AD</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Stats - Full Width -->
+            <div class="lmn lmn-full mb-3">
+                <div class="lmn-bd">
+                    <div class="pl-box pl-box-4">
+                        <div class="bx-itm bx-blue">
+                            <div class="text-sm white">Total Revenue</div>
+                            <div class="stat-number white">$24,826</div>
+                            <div class="text-sm white">+18% from last month</div>
+                        </div>
+                        <div class="bx-itm bx-green">
+                            <div class="text-sm white">New Users</div>
+                            <div class="stat-number white">2,148</div>
+                            <div class="text-sm white">+12% from last month</div>
+                        </div>
+                        <div class="bx-itm" style="border-left: 4px solid #8b5cf6;">
+                            <div class="text-sm abu1">Orders</div>
+                            <div class="stat-number ungu1">624</div>
+                            <div class="text-sm abu2">+8% from last month</div>
+                        </div>
+                        <div class="bx-itm" style="border-left: 4px solid #f59e0b;">
+                            <div class="text-sm abu1">Conversion</div>
+                            <div class="stat-number kuning1">32.5%</div>
+                            <div class="text-sm abu2">+3.2% from last month</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content Grid -->
+            <div class="rw" style="gap: 20px;">
+                <!-- Left Column - 8 grid -->
+                <div class="cl-8 cm-12 cs-12">
+                    <!-- Revenue Chart - Compact -->
+                    <div class="lmn lmn-compact mb-3">
+                        <div class="lmn-hd pt-between">
+                            <h3>Revenue Analytics</h3>
+                            <select style="padding: 0.25rem; border: 1px solid #e2e8f0; border-radius: 4px;">
+                                <option>Last 7 days</option>
+                                <option>Last 30 days</option>
+                                <option>Last 90 days</option>
+                            </select>
+                        </div>
+                        <div class="lmn-bd">
+                            <div style="height: 200px; background: #f8fafc; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #64748b;">
+                                📈 Chart Area - Revenue Visualization
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Activity - Compact -->
+                    <div class="lmn lmn-compact mb-3">
+                        <div class="lmn-hd pt-between">
+                            <h3>Recent Activity</h3>
+                            <span class="abu2 text-sm">View All</span>
+                        </div>
+                        <div class="lmn-bd">
+                            <div class="pl-box pl-box-1">
+                                <div class="bx-itm bx-compact bx-clean pt-between">
+                                    <div>
+                                        <div class="font-bold">John Doe made a purchase</div>
+                                        <div class="text-sm abu2">Order #ORD-7821 • $124.99</div>
+                                    </div>
+                                    <span class="hijau1 text-sm">2 min ago</span>
+                                </div>
+                                <div class="bx-itm bx-compact bx-clean pt-between">
+                                    <div>
+                                        <div class="font-bold">Jane Smith registered</div>
+                                        <div class="text-sm abu2">New user account created</div>
+                                    </div>
+                                    <span class="biru1 text-sm">15 min ago</span>
+                                </div>
+                                <div class="bx-itm bx-compact bx-clean pt-between">
+                                    <div>
+                                        <div class="font-bold">Product stock updated</div>
+                                        <div class="text-sm abu2">iPhone 14 Pro - 50 units added</div>
+                                    </div>
+                                    <span class="kuning1 text-sm">1 hour ago</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- User Management - Full -->
+                    <div class="lmn mb-3">
+                        <div class="lmn-hd pt-between">
+                            <h3>User Management</h3>
+                            <button style="background:#003ec4; color:white; border:none; padding:0.5rem 1rem; border-radius:4px;">
+                                + Add User
+                            </button>
+                        </div>
+                        <div class="lmn-bd">
+                            <div class="pl-box pl-box-3">
+                                <div class="bx-itm bx-compact pt-center">
+                                    <div class="text-2xl font-bold biru1">1,248</div>
+                                    <div class="text-sm abu2">Total Users</div>
+                                </div>
+                                <div class="bx-itm bx-compact pt-center">
+                                    <div class="text-2xl font-bold hijau1">847</div>
+                                    <div class="text-sm abu2">Active Today</div>
+                                </div>
+                                <div class="bx-itm bx-compact pt-center">
+                                    <div class="text-2xl font-bold kuning1">24</div>
+                                    <div class="text-sm abu2">New This Week</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column - 4 grid -->
+                <div class="cl-4 cm-12 cs-12">
+                    <!-- System Status - Compact -->
+                    <div class="lmn lmn-compact mb-3">
+                        <div class="lmn-hd">
+                            <h3>System Status</h3>
+                        </div>
+                        <div class="lmn-bd">
+                            <div class="pl-box pl-box-1">
+                                <div class="bx-itm bx-compact bx-highlight pt-between">
+                                    <span>Server Uptime</span>
+                                    <span class="hijau1 font-bold">99.9%</span>
+                                </div>
+                                <div class="bx-itm bx-compact bx-highlight pt-between">
+                                    <span>Database</span>
+                                    <span class="hijau1 font-bold">Healthy</span>
+                                </div>
+                                <div class="bx-itm bx-compact bx-highlight pt-between">
+                                    <span>API Response</span>
+                                    <span class="hijau1 font-bold">124ms</span>
+                                </div>
+                                <div class="bx-itm bx-compact bx-highlight pt-between">
+                                    <span>Active Sessions</span>
+                                    <span class="biru1 font-bold">247</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Progress Tracking - Compact -->
+                    <div class="lmn lmn-compact mb-3">
+                        <div class="lmn-hd">
+                            <h3>Monthly Goals</h3>
+                        </div>
+                        <div class="lmn-bd">
+                            <div class="pl-box pl-box-1">
+                                <div class="bx-itm bx-compact bx-clean">
+                                    <div class="pt-between mb-1">
+                                        <span class="font-bold">Revenue Target</span>
+                                        <span class="hijau1">85%</span>
+                                    </div>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 85%"></div>
+                                    </div>
+                                </div>
+                                <div class="bx-itm bx-compact bx-clean">
+                                    <div class="pt-between mb-1">
+                                        <span class="font-bold">User Acquisition</span>
+                                        <span class="biru1">72%</span>
+                                    </div>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 72%; background: #3b82f6"></div>
+                                    </div>
+                                </div>
+                                <div class="bx-itm bx-compact bx-clean">
+                                    <div class="pt-between mb-1">
+                                        <span class="font-bold">Order Completion</span>
+                                        <span class="ungu1">91%</span>
+                                    </div>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 91%; background: #8b5cf6"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions - Plain -->
+                    <div class="lmn lmn-plain">
+                        <div class="lmn-hd">
+                            <h3>Quick Actions</h3>
+                        </div>
+                        <div class="lmn-bd">
+                            <div class="pl-box pl-box-1">
+                                <div class="bx-itm bx-compact bx-clean js-interactive">
+                                    <div class="pt-start">
+                                        <span style="margin-right: 12px;">📊</span>
+                                        <span>Generate Report</span>
+                                    </div>
+                                </div>
+                                <div class="bx-itm bx-compact bx-clean js-interactive">
+                                    <div class="pt-start">
+                                        <span style="margin-right: 12px;">👥</span>
+                                        <span>Manage Users</span>
+                                    </div>
+                                </div>
+                                <div class="bx-itm bx-compact bx-clean js-interactive">
+                                    <div class="pt-start">
+                                        <span style="margin-right: 12px;">⚙️</span>
+                                        <span>System Settings</span>
+                                    </div>
+                                </div>
+                                <div class="bx-itm bx-compact bx-clean js-interactive">
+                                    <div class="pt-start">
+                                        <span style="margin-right: 12px;">📧</span>
+                                        <span>Send Newsletter</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Section - Full Width -->
+            <div class="lmn lmn-full mt-3">
+                <div class="lmn-hd pt-between">
+                    <h3>Recent Orders</h3>
+                    <button style="background:transparent; color:#003ec4; border:1px solid #003ec4; padding:0.5rem 1rem; border-radius:4px;">
+                        Export Data
+                    </button>
+                </div>
+                <div class="lmn-bd">
+                    <div style="background: white; border-radius: 8px; padding: 1rem;">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 1rem; padding: 1rem 0; border-bottom: 1px solid #e2e8f0;">
+                            <div class="font-bold">Order ID</div>
+                            <div class="font-bold">Customer</div>
+                            <div class="font-bold">Amount</div>
+                            <div class="font-bold">Status</div>
+                        </div>
+                        <!-- Order rows would go here -->
+                        <div class="pt-center p-3 abu2">
+                            Order list would be populated here...
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Polos Framework JS -->
+    <script>
+        // Enhanced polos.js code
+    </script>
+
+    <script>
+        // Demo interactivity
+        document.addEventListener('DOMContentLoaded', function() {
+            // Enhance interactive elements
+            if (window.Polos) {
+                Polos.enhance('.js-interactive');
+            }
+            
+            // Add click effects to interactive items
+            document.querySelectorAll('.js-interactive').forEach(item => {
+                item.addEventListener('click', function() {
+                    this.style.backgroundColor = '#f8fafc';
+                    setTimeout(() => {
+                        this.style.backgroundColor = '';
+                    }, 200);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
