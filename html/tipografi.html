@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tipografi Responsif - Demo</title>
+    <link rel="stylesheet" href="typography.css">
+    <style>
+        .demo-section {
+            margin-bottom: 3rem;
+            padding: 2rem;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .bg-dark {
+            background-color: #343a40;
+            color: white;
+            padding: 2rem;
+            border-radius: 0.5rem;
+        }
+        
+        .color-swatch {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+            vertical-align: middle;
+        }
+        
+        .color-primary { background-color: #212529; }
+        .color-secondary { background-color: #6c757d; }
+        .color-muted { background-color: #adb5bd; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center">Tipografi Responsif</h1>
+        <p class="lead text-center">Sistem tipografi yang menyesuaikan dengan berbagai ukuran layar</p>
+        
+        <!-- Headings Section -->
+        <div class="demo-section">
+            <h2>Heading Levels</h2>
+            <p>Semua heading secara otomatis menyesuaikan ukuran berdasarkan breakpoint.</p>
+            
+            <h1>Heading 1 - Utama</h1>
+            <h2>Heading 2 - Section</h2>
+            <h3>Heading 3 - Subsection</h3>
+            <h4>Heading 4 - Minor Section</h4>
+            <h5>Heading 5 - Small Heading</h5>
+            <h6>Heading 6 - Tiny Heading</h6>
+        </div>
+        
+        <!-- Body Text Section -->
+        <div class="demo-section">
+            <h2>Body Text & Variations</h2>
+            
+            <p>Ini adalah paragraf normal. Font size akan menyesuaikan berdasarkan ukuran layar device pengguna.</p>
+            
+            <p class="lead">Ini adalah lead paragraph. Biasanya digunakan untuk intro atau pembukaan yang lebih menonjol.</p>
+            
+            <p class="small">Ini adalah teks kecil, cocok untuk disclaimer, caption, atau informasi tambahan.</p>
+            
+            <p class="x-small">Ini adalah teks sangat kecil, untuk informasi yang tidak terlalu penting.</p>
+        </div>
+        
+        <!-- Text Utilities Section -->
+        <div class="demo-section">
+            <h2>Text Utilities</h2>
+            
+            <div class="mb-3">
+                <p class="text-primary"><span class="color-swatch color-primary"></span>Text Primary - Warna teks utama</p>
+                <p class="text-secondary"><span class="color-swatch color-secondary"></span>Text Secondary - Warna teks sekunder</p>
+                <p class="text-muted"><span class="color-swatch color-muted"></span>Text Muted - Warna teks redup</p>
+            </div>
+            
+            <div class="mb-3">
+                <p class="font-weight-light">Font Weight Light - Ringan</p>
+                <p class="font-weight-normal">Font Weight Normal - Normal</p>
+                <p class="font-weight-medium">Font Weight Medium - Sedang</p>
+                <p class="font-weight-semibold">Font Weight Semibold - Semi tebal</p>
+                <p class="font-weight-bold">Font Weight Bold - Tebal</p>
+                <p class="font-weight-bolder">Font Weight Bolder - Lebih tebal</p>
+            </div>
+            
+            <div class="mb-3">
+                <p class="text-uppercase">Teks dalam uppercase</p>
+                <p class="text-lowercase">Teks Dalam Lowercase</p>
+                <p class="text-capitalize">teks dalam capitalize</p>
+            </div>
+        </div>
+        
+        <!-- Alignment Section -->
+        <div class="demo-section">
+            <h2>Text Alignment</h2>
+            
+            <p class="text-left">Teks rata kiri (default)</p>
+            <p class="text-center">Teks rata tengah</p>
+            <p class="text-right">Teks rata kanan</p>
+            <p class="text-justify">Teks rata kiri-kanan. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+        </div>
+        
+        <!-- Lists Section -->
+        <div class="demo-section">
+            <h2>Lists</h2>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <h4>Unordered List</h4>
+                    <ul>
+                        <li>Item list pertama</li>
+                        <li>Item list kedua</li>
+                        <li>Item list ketiga
+                            <ul>
+                                <li>Sub item pertama</li>
+                                <li>Sub item kedua</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="col-md-6">
+                    <h4>Ordered List</h4>
+                    <ol>
+                        <li>Langkah pertama</li>
+                        <li>Langkah kedua</li>
+                        <li>Langkah ketiga</li>
+                    </ol>
+                    
+                    <h4>Unstyled List</h4>
+                    <ul class="list-unstyled">
+                        <li>Item tanpa bullet</li>
+                        <li>Item tanpa bullet</li>
+                        <li>Item tanpa bullet</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Blockquotes & Code -->
+        <div class="demo-section">
+            <h2>Blockquotes & Code</h2>
+            
+            <blockquote>
+                <p>Ini adalah blockquote. Biasanya digunakan untuk kutipan atau testimonial.</p>
+                <footer>— Someone Famous</footer>
+            </blockquote>
+            
+            <p>Contoh kode inline: <code>&lt;div class="container"&gt;</code></p>
+            
+            <pre><code>// Contoh code block
+function helloWorld() {
+    console.log("Hello, World!");
+    return true;
+}</code></pre>
+        </div>
+        
+        <!-- Dark Background -->
+        <div class="demo-section">
+            <h2>Dark Background</h2>
+            
+            <div class="bg-dark">
+                <h3 class="text-light">Heading pada Dark Background</h3>
+                <p class="text-light">Teks biasa pada dark background. Tetap mudah dibaca dengan kontras yang baik.</p>
+                <p class="text-muted">Teks muted pada dark background.</p>
+            </div>
+        </div>
+        
+        <!-- Responsive Demo -->
+        <div class="demo-section">
+            <h2>Responsive Behavior</h2>
+            <p>Coba resize browser atau buka di device berbeda untuk melihat perbedaan ukuran font!</p>
+            
+            <div class="text-sm-center text-md-left text-lg-center text-xl-right">
+                <p>Text alignment ini berubah berdasarkan breakpoint:</p>
+                <ul>
+                    <li>Mobile: Center</li>
+                    <li>Tablet: Left</li>
+                    <li>Desktop: Center</li>
+                    <li>Large Desktop: Right</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
