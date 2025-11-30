@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tabel Custom - Ukuran Optimal</title>
+    <style>
+        /* Table Base Style */
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1rem;
+            background-color: #fff;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+
+        .table th,
+        .table td {
+            padding: 0.5rem 0.75rem;
+            font-size: 0.9rem;
+            vertical-align: top;
+            border-top: 1px solid #dee2e6;
+            text-align: left;
+        }
+
+        .table thead th {
+            vertical-align: bottom;
+            border-bottom: 2px solid #dee2e6;
+            font-weight: 600;
+            background-color: #f8f9fa;
+        }
+
+        .table tbody + tbody {
+            border-top: 2px solid #dee2e6;
+        }
+
+        /* Table Variations */
+        .table-striped tbody tr:nth-of-type(odd) {
+            background-color: rgba(0, 0, 0, 0.02);
+        }
+
+        .table-bordered {
+            border: 1px solid #dee2e6;
+        }
+
+        .table-bordered th,
+        .table-bordered td {
+            border: 1px solid #dee2e6;
+        }
+
+        .table-borderless th,
+        .table-borderless td,
+        .table-borderless thead th,
+        .table-borderless tbody + tbody {
+            border: 0;
+        }
+
+        .table-hover tbody tr:hover {
+            background-color: rgba(0, 0, 0, 0.04);
+        }
+
+        /* Contextual Backgrounds */
+        .table-primary { background-color: #cfe2ff; }
+        .table-success { background-color: #d1e7dd; }
+        .table-danger { background-color: #f8d7da; }
+        .table-warning { background-color: #fff3cd; }
+        .table-info { background-color: #cff4fc; }
+
+        /* Responsive Table */
+        .table-responsive {
+            display: block;
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* Demo Styles */
+        body {
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .demo-section {
+            margin-bottom: 40px;
+        }
+        
+        .demo-section h2 {
+            color: #495057;
+            border-bottom: 1px solid #dee2e6;
+            padding-bottom: 10px;
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Tabel Custom - Ukuran Optimal</h1>
+        
+        <div class="demo-section">
+            <h2>Tabel Standar</h2>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Nama</th>
+                            <th>Email</th>
+                            <th>Telepon</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>John Doe</td>
+                            <td>john@example.com</td>
+                            <td>08123456789</td>
+                            <td>Aktif</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Jane Smith</td>
+                            <td>jane@example.com</td>
+                            <td>08129876543</td>
+                            <td>Aktif</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>Robert Johnson</td>
+                            <td>robert@example.com</td>
+                            <td>08111222333</td>
+                            <td>Nonaktif</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="demo-section">
+            <h2>Tabel Striped + Hover</h2>
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Produk</th>
+                            <th>Kategori</th>
+                            <th>Harga</th>
+                            <th>Stok</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>Laptop Gaming</td>
+                            <td>Elektronik</td>
+                            <td>Rp 15.000.000</td>
+                            <td>12</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Smartphone</td>
+                            <td>Elektronik</td>
+                            <td>Rp 8.500.000</td>
+                            <td>25</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>Meja Kantor</td>
+                            <td>Furniture</td>
+                            <td>Rp 2.300.000</td>
+                            <td>8</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>Kursi Ergonomis</td>
+                            <td>Furniture</td>
+                            <td>Rp 1.750.000</td>
+                            <td>15</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="demo-section">
+            <h2>Tabel Bordered + Striped + Hover</h2>
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nama Proyek</th>
+                            <th>Tim</th>
+                            <th>Deadline</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>P001</td>
+                            <td>Website Perusahaan</td>
+                            <td>Web Development</td>
+                            <td>15 Des 2023</td>
+                            <td class="table-success">Selesai</td>
+                        </tr>
+                        <tr>
+                            <td>P002</td>
+                            <td>Aplikasi Mobile</td>
+                            <td>Mobile Development</td>
+                            <td>30 Jan 2024</td>
+                            <td class="table-warning">Dalam Proses</td>
+                        </tr>
+                        <tr>
+                            <td>P003</td>
+                            <td>Sistem Inventory</td>
+                            <td>Backend Development</td>
+                            <td>10 Nov 2023</td>
+                            <td class="table-danger">Terlambat</td>
+                        </tr>
+                        <tr>
+                            <td>P004</td>
+                            <td>Dashboard Analytics</td>
+                            <td>Data Science</td>
+                            <td>20 Feb 2024</td>
+                            <td class="table-info">Perencanaan</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="demo-section">
+            <h2>Tabel Borderless</h2>
+            <div class="table-responsive">
+                <table class="table table-borderless">
+                    <thead>
+                        <tr>
+                            <th>Kode</th>
+                            <th>Mata Kuliah</th>
+                            <th>SKS</th>
+                            <th>Dosen</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>MK101</td>
+                            <td>Pemrograman Web</td>
+                            <td>3</td>
+                            <td>Dr. Ahmad</td>
+                        </tr>
+                        <tr>
+                            <td>MK102</td>
+                            <td>Basis Data</td>
+                            <td>3</td>
+                            <td>Dr. Sari</td>
+                        </tr>
+                        <tr>
+                            <td>MK103</td>
+                            <td>Jaringan Komputer</td>
+                            <td>2</td>
+                            <td>Dr. Budi</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
