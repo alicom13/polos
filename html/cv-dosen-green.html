@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biografi Akademik - Prof. Dr. Ahmad Rahman, M.Sc.</title>
+    
+    <!-- CDN Polos CSS Framework -->
+    <link rel="stylesheet" href="polos.css">
+    
+    <!-- CDN Tambahan -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/alicom13/polos/css/polos-tipografi.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/alicom13/polos/css/table.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/alicom13/viewtable/css/viewtable-v1.2.1.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background-color: #f8fcf9;
+            color: #2d3748;
+            line-height: 1.6;
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(222, 247, 236, 0.3) 0%, transparent 55%),
+                radial-gradient(circle at 85% 30%, rgba(222, 247, 236, 0.2) 0%, transparent 55%);
+        }
+        
+        .bio-header {
+            background: linear-gradient(135deg, #0d9488 0%, #2dd4bf 100%);
+            color: white;
+            padding: 2.5rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .bio-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%230db7ab' fill-opacity='0.15' fill-rule='evenodd'/%3E%3C/svg%3E");
+            opacity: 0.3;
+        }
+        
+        .header-content {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .profile-image {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            object-fit: cover;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 10px 20px rgba(13, 148, 136, 0.2);
+        }
+        
+        .contact-info {
+            margin-top: 1.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            justify-content: center;
+        }
+        
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255, 255, 255, 0.15);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .bio-container {
+            padding: 2rem 0;
+        }
+        
+        .section-title {
+            color: #0d9488;
+            border-bottom: 3px solid #a7f3d0;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            position: relative;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -3px;
+            left: 0;
+            width: 100px;
+            height: 3px;
+            background: linear-gradient(90deg, #0d9488, #2dd4bf);
+            border-radius: 3px;
+        }
+        
+        .tabs-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(13, 148, 136, 0.08);
+            margin-bottom: 2rem;
+            overflow: hidden;
+            border: 1px solid #d1fae5;
+        }
+        
+        .tabs-header {
+            display: flex;
+            border-bottom: 1px solid #d1fae5;
+            background: #f0fdf9;
+        }
+        
+        .tab-button {
+            padding: 1rem 1.5rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .tab-button:hover {
+            background: #e0f7f1;
+            color: #0d9488;
+        }
+        
+        .tab-button.active {
+            color: #0d9488;
+            background: white;
+        }
+        
+        .tab-button.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #0d9488, #2dd4bf);
+        }
+        
+        .tab-content {
+            padding: 1.5rem;
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .table-responsive {
+            overflow-x: auto;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(13, 148, 136, 0.1);
+            border: 1px solid #d1fae5;
+        }
+        
+        .badge {
+            padding: 0.35rem 0.85rem;
+            border-radius: 50px;
+            display: inline-block;
+            border: 1px solid transparent;
+        }
+        
+        .badge-primary {
+            background-color: #d1fae5;
+            color: #065f46;
+            border-color: #a7f3d0;
+        }
+        
+        .badge-success {
+            background-color: #dcfce7;
+            color: #166534;
+            border-color: #86efac;
+        }
+        
+        .badge-warning {
+            background-color: #fef3c7;
+            color: #92400e;
+            border-color: #fde68a;
+        }
+        
+        .bio-footer {
+            background: linear-gradient(135deg, #0f766e 0%, #0d9488 100%);
+            color: white;
+            padding: 2.5rem 0;
+            text-align: center;
+            margin-top: 3rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .bio-footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffffff' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
+        }
+        
+        .footer-content {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+        
+        .social-link {
+            color: white;
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.15);
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+        }
+        
+        .social-link:hover {
+            color: #0d9488;
+            background: white;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .print-button {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: linear-gradient(135deg, #0d9488 0%, #2dd4bf 100%);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(13, 148, 136, 0.3);
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+        
+        .print-button:hover {
+            background: linear-gradient(135deg, #0f766e 0%, #0d9488 100%);
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 8px 20px rgba(13, 148, 136, 0.4);
+        }
+        
+        @media print {
+            .print-button {
+                display: none;
+            }
+            
+            .bio-header {
+                background: #0d9488 !important;
+                -webkit-print-color-adjust: exact;
+            }
+            
+            .tabs-header {
+                display: none;
+            }
+            
+            .tab-content {
+                display: block !important;
+                padding: 0;
+                margin-bottom: 1.5rem;
+            }
+        }
+        
+        @media (max-width: 767.98px) {
+            .profile-image {
+                width: 150px;
+                height: 150px;
+            }
+            
+            .contact-info {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: center;
+            }
+            
+            .contact-item {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .tabs-header {
+                flex-direction: column;
+            }
+            
+            .tab-button {
+                justify-content: center;
+                border-bottom: 1px solid #d1fae5;
+            }
+            
+            .tab-button:last-child {
+                border-bottom: none;
+            }
+            
+            .tab-button.active::after {
+                width: 3px;
+                height: 100%;
+                right: auto;
+                bottom: auto;
+                left: 0;
+                top: 0;
+            }
+            
+            .print-button {
+                bottom: 1rem;
+                right: 1rem;
+                width: 50px;
+                height: 50px;
+            }
+        }
+        
+        .timeline-item {
+            border-left: 3px solid #0d9488;
+            padding-left: 1.5rem;
+            padding-bottom: 1.5rem;
+            position: relative;
+            margin-bottom: 1rem;
+        }
+        
+        .timeline-item:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -8px;
+            top: 0;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #0d9488, #2dd4bf);
+            box-shadow: 0 0 0 3px #d1fae5;
+        }
+        
+        .timeline-date {
+            color: #0d9488;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .timeline-date::before {
+            content: '📅';
+        }
+        
+        .skills-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+        
+        .skill-tag {
+            background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+            color: #065f46;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            border: 1px solid #86efac;
+            transition: all 0.3s ease;
+        }
+        
+        .skill-tag:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(13, 148, 136, 0.15);
+        }
+        
+        /* Custom colors untuk Polos Framework */
+        .green1 { color: #0d9488 !important; }
+        .green2 { color: #2dd4bf !important; }
+        .green3 { color: #5eead4 !important; }
+        .green4 { color: #99f6e4 !important; }
+        
+        .bg-green1 { background-color: #0d9488 !important; }
+        .bg-green2 { background-color: #2dd4bf !important; }
+        
+        .bx-highlight {
+            border-left-color: #0d9488 !important;
+            background: #f0fdf9 !important;
+        }
+        
+        .bx-blue {
+            background: #0d9488 !important;
+            color: white !important;
+        }
+        
+        .bx-green {
+            background: #10b981 !important;
+            color: white !important;
+        }
+        
+        .bx-gray {
+            background: #f0fdf9 !important;
+            border-color: #d1fae5 !important;
+        }
+        
+        .yellow1 { color: #d97706 !important; }
+        
+        /* Card hover effect */
+        .bx-itm {
+            transition: all 0.3s ease !important;
+            border-color: #d1fae5 !important;
+        }
+        
+        .bx-itm:hover {
+            transform: translateY(-5px) !important;
+            box-shadow: 0 8px 20px rgba(13, 148, 136, 0.15) !important;
+            border-color: #a7f3d0 !important;
+        }
+        
+        /* Border radius untuk semua elemen */
+        .lmn, .bx-itm, .table-responsive, .tabs-container {
+            border-radius: 12px !important;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Profil -->
+    <header class="bio-header">
+        <div class="lmn lmn-wide header-content">
+            <div class="pt-center">
+                <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80" alt="Prof. Dr. Ahmad Rahman, M.Sc." class="profile-image">
+            </div>
+            
+            <div class="pt-center">
+                <div class="name-title">
+                    <h1>Prof. Dr. Ahmad Rahman, M.Sc.</h1>
+                    <h2>Guru Besar Ilmu Komputer</h2>
+                </div>
+                
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <i class="ti ti-building"></i>
+                        <span>Universitas Negeri Jakarta</span>
+                    </div>
+                    <div class="contact-item">
+                        <i class="ti ti-phone"></i>
+                        <span>+62 812-3456-7890</span>
+                    </div>
+                    <div class="contact-item">
+                        <i class="ti ti-mail"></i>
+                        <span>ahmad.rahman@unj.ac.id</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Konten Utama Biografi -->
+    <main class="bio-container">
+        <div class="lmn lmn-wide">
+            <!-- Sistem Grid untuk layout utama -->
+            <div class="rw">
+                <!-- Kolom kiri: Profil dan Tabs -->
+                <div class="cl-4 cm-12 cs-12">
+                    <!-- Tentang Saya -->
+                    <div class="lmn lmn-plain bx-itm" style="margin-bottom: 1.5rem;">
+                        <h3 class="section-title">
+                            <i class="ti ti-user"></i>Tentang Saya
+                        </h3>
+                        <p>Dosen aktif dengan pengalaman lebih dari 20 tahun dalam bidang Ilmu Komputer dan Teknologi Informasi. Spesialisasi dalam Kecerdasan Buatan, Pembelajaran Mesin, dan Sistem Cerdas. Memiliki passion kuat dalam penelitian dan pengembangan teknologi untuk pendidikan.</p>
+                        
+                        <div class="rw" style="margin-top: 1rem;">
+                            <div class="cl-6"><p><i class="ti ti-calendar"></i> <strong>Umur:</strong> 48 tahun</p></div>
+                            <div class="cl-6"><p><i class="ti ti-map-pin"></i> <strong>Lokasi:</strong> Jakarta</p></div>
+                            <div class="cl-6"><p><i class="ti ti-language"></i> <strong>Bahasa:</strong> Indonesia, Inggris</p></div>
+                            <div class="cl-6"><p><i class="ti ti-users"></i> <strong>Mahasiswa:</strong> 120+</p></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Tabs untuk Pendidikan, Keahlian, dan Pengalaman -->
+                    <div class="tabs-container">
+                        <div class="tabs-header">
+                            <button class="tab-button active" data-tab="pendidikan">
+                                <i class="ti ti-school"></i> Pendidikan
+                            </button>
+                            <button class="tab-button" data-tab="keahlian">
+                                <i class="ti ti-tools"></i> Keahlian
+                            </button>
+                            <button class="tab-button" data-tab="pengalaman">
+                                <i class="ti ti-briefcase"></i> Pengalaman
+                            </button>
+                        </div>
+                        
+                        <!-- Tab Pendidikan -->
+                        <div class="tab-content active" id="pendidikan">
+                            <div class="pl-box pl-box-1">
+                                <div class="bx-itm bx-highlight">
+                                    <div class="timeline-item">
+                                        <div class="timeline-date">2010 - 2014</div>
+                                        <h4>Ph.D. Computer Science</h4>
+                                        <p><em>Stanford University, USA</em></p>
+                                        <p>Disertasi: "Deep Learning Algorithms for Natural Language Processing" - IPK: 3.9/4.0</p>
+                                    </div>
+                                </div>
+                                <div class="bx-itm bx-highlight">
+                                    <div class="timeline-item">
+                                        <div class="timeline-date">2005 - 2007</div>
+                                        <h4>M.Sc. Artificial Intelligence</h4>
+                                        <p><em>University of Edinburgh, UK</em></p>
+                                        <p>Tesis: "Neural Network Optimization Techniques" - IPK: Distinction</p>
+                                    </div>
+                                </div>
+                                <div class="bx-itm bx-highlight">
+                                    <div class="timeline-item">
+                                        <div class="timeline-date">1998 - 2002</div>
+                                        <h4>S.Kom. Teknik Informatika</h4>
+                                        <p><em>Institut Teknologi Bandung</em></p>
+                                        <p>IPK: 3.89/4.00, Cum Laude, Predikat Terbaik</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Tab Keahlian -->
+                        <div class="tab-content" id="keahlian">
+                            <div class="pl-box pl-box-1">
+                                <div class="bx-itm">
+                                    <h4><i class="ti ti-code"></i> Bahasa Pemrograman</h4>
+                                    <div class="skills-list" style="margin-top: 1rem;">
+                                        <span class="skill-tag">Python</span>
+                                        <span class="skill-tag">R</span>
+                                        <span class="skill-tag">Java</span>
+                                        <span class="skill-tag">C++</span>
+                                        <span class="skill-tag">JavaScript</span>
+                                        <span class="skill-tag">SQL</span>
+                                    </div>
+                                </div>
+                                <div class="bx-itm">
+                                    <h4><i class="ti ti-apps"></i> Framework & Tools</h4>
+                                    <div class="skills-list" style="margin-top: 1rem;">
+                                        <span class="skill-tag">TensorFlow</span>
+                                        <span class="skill-tag">PyTorch</span>
+                                        <span class="skill-tag">Scikit-learn</span>
+                                        <span class="skill-tag">Django</span>
+                                        <span class="skill-tag">React</span>
+                                        <span class="skill-tag">Git</span>
+                                    </div>
+                                </div>
+                                <div class="bx-itm">
+                                    <h4><i class="ti ti-brain"></i> Bidang Keahlian</h4>
+                                    <div class="skills-list" style="margin-top: 1rem;">
+                                        <span class="skill-tag">Machine Learning</span>
+                                        <span class="skill-tag">Deep Learning</span>
+                                        <span class="skill-tag">NLP</span>
+                                        <span class="skill-tag">Computer Vision</span>
+                                        <span class="skill-tag">Data Science</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Tab Pengalaman -->
+                        <div class="tab-content" id="pengalaman">
+                            <div class="pl-box pl-box-1">
+                                <div class="bx-itm bx-highlight">
+                                    <div class="timeline-item">
+                                        <div class="timeline-date">2015 - Sekarang</div>
+                                        <h4>Guru Besar Ilmu Komputer</h4>
+                                        <p><em>Universitas Negeri Jakarta</em></p>
+                                        <p>Memimpin penelitian di Lab AI, mengajar S1-S3, membimbing 15 mahasiswa S3, 25 mahasiswa S2.</p>
+                                    </div>
+                                </div>
+                                <div class="bx-itm bx-highlight">
+                                    <div class="timeline-item">
+                                        <div class="timeline-date">2010 - 2015</div>
+                                        <h4>Dosen Lektor Kepala</h4>
+                                        <p><em>Universitas Gadjah Mada</em></p>
+                                        <p>Koordinator program studi Teknik Informatika, peneliti utama 5 proyek nasional.</p>
+                                    </div>
+                                </div>
+                                <div class="bx-itm bx-highlight">
+                                    <div class="timeline-item">
+                                        <div class="timeline-date">2007 - 2010</div>
+                                        <h4>Dosen Lektor</h4>
+                                        <p><em>Universitas Indonesia</em></p>
+                                        <p>Pengembangan kurikulum TI, instruktur pelatihan industri, konsultan IT.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Kolom kanan: Publikasi, Penelitian, dan Penghargaan -->
+                <div class="cl-8 cm-12 cs-12">
+                    <!-- Publikasi Jurnal dalam Tabel -->
+                    <div class="lmn lmn-plain bx-itm" style="margin-bottom: 2rem;">
+                        <h3 class="section-title">
+                            <i class="ti ti-news"></i>Publikasi Jurnal
+                        </h3>
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>No</th>
+                                        <th>Judul</th>
+                                        <th>Jurnal</th>
+                                        <th>Tahun</th>
+                                        <th>Status</th>
+                                        <th>Impact Factor</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>1</td>
+                                        <td>Optimizing CNN for Bahasa Indonesia Text Classification</td>
+                                        <td>IEEE Access</td>
+                                        <td>2023</td>
+                                        <td><span class="badge badge-success">Published</span></td>
+                                        <td>3.9</td>
+                                    </tr>
+                                    <tr>
+                                        <td>2</td>
+                                        <td>Hybrid AI Model for Early Disease Detection</td>
+                                        <td>Nature Scientific Reports</td>
+                                        <td>2021</td>
+                                        <td><span class="badge badge-success">Published</span></td>
+                                        <td>4.6</td>
+                                    </tr>
+                                    <tr>
+                                        <td>3</td>
+                                        <td>Deep Learning for Medical Image Analysis in Resource-Limited Settings</td>
+                                        <td>Journal of Medical Systems</td>
+                                        <td>2020</td>
+                                        <td><span class="badge badge-success">Published</span></td>
+                                        <td>5.3</td>
+                                    </tr>
+                                    <tr>
+                                        <td>4</td>
+                                        <td>Adaptive Learning Systems Using Reinforcement Learning</td>
+                                        <td>Computers & Education</td>
+                                        <td>2019</td>
+                                        <td><span class="badge badge-success">Published</span></td>
+                                        <td>8.5</td>
+                                    </tr>
+                                    <tr>
+                                        <td>5</td>
+                                        <td>Multilingual Transformer Models for Low-Resource Languages</td>
+                                        <td>ACM Transactions on Asian Language Processing</td>
+                                        <td>2022</td>
+                                        <td><span class="badge badge-warning">Under Review</span></td>
+                                        <td>2.8</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- Karya Tulis dan Buku dalam Tabel -->
+                    <div class="lmn lmn-plain bx-itm" style="margin-bottom: 2rem;">
+                        <h3 class="section-title">
+                            <i class="ti ti-book"></i>Karya Tulis & Buku
+                        </h3>
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>No</th>
+                                        <th>Judul</th>
+                                        <th>Penerbit</th>
+                                        <th>Tahun</th>
+                                        <th>Tipe</th>
+                                        <th>ISBN</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>1</td>
+                                        <td>Deep Learning Fundamentals (Edisi ke-2)</td>
+                                        <td>Springer</td>
+                                        <td>2022</td>
+                                        <td><span class="badge badge-primary">Buku Internasional</span></td>
+                                        <td>978-3-031-12345-6</td>
+                                    </tr>
+                                    <tr>
+                                        <td>2</td>
+                                        <td>Machine Learning for Indonesian Language</td>
+                                        <td>Penerbit ITB</td>
+                                        <td>2019</td>
+                                        <td><span class="badge badge-primary">Buku Nasional</span></td>
+                                        <td>978-602-786-123-4</td>
+                                    </tr>
+                                    <tr>
+                                        <td>3</td>
+                                        <td>Artificial Intelligence in Education: Indonesian Perspective</td>
+                                        <td>Routledge</td>
+                                        <td>2021</td>
+                                        <td><span class="badge badge-primary">Buku Internasional</span></td>
+                                        <td>978-0-367-12345-6</td>
+                                    </tr>
+                                    <tr>
+                                        <td>4</td>
+                                        <td>Prosiding Konferensi AI Nasional 2023</td>
+                                        <td>IEEE Indonesia Section</td>
+                                        <td>2023</td>
+                                        <td><span class="badge badge-primary">Prosiding</span></td>
+                                        <td>978-1-7281-1234-5</td>
+                                    </tr>
+                                    <tr>
+                                        <td>5</td>
+                                        <td>Panduan Praktis Python untuk Data Science</td>
+                                        <td>Elex Media Komputindo</td>
+                                        <td>2020</td>
+                                        <td><span class="badge badge-primary">Buku Ajar</span></td>
+                                        <td>978-602-045-123-4</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- Penghargaan dan Proyek -->
+                    <div class="rw">
+                        <div class="cl-6 cm-12 cs-12">
+                            <div class="lmn lmn-plain bx-itm" style="height: 100%;">
+                                <h3 class="section-title">
+                                    <i class="ti ti-award"></i>Penghargaan
+                                </h3>
+                                <div class="pl-box pl-box-1">
+                                    <div class="bx-itm bx-clean">
+                                        <h4><i class="ti ti-trophy yellow1"></i> Peneliti Terbaik</h4>
+                                        <p>Kementerian Pendidikan dan Kebudayaan, 2022</p>
+                                        <small>Untuk kontribusi penelitian AI di bidang pendidikan</small>
+                                    </div>
+                                    <div class="bx-itm bx-clean">
+                                        <h4><i class="ti ti-medal yellow1"></i> Inovator Bidang AI</h4>
+                                        <p>Asosiasi Artificial Intelligence Indonesia, 2021</p>
+                                        <small>Pengembangan model NLP untuk bahasa daerah</small>
+                                    </div>
+                                    <div class="bx-itm bx-clean">
+                                        <h4><i class="ti ti-star yellow1"></i> Dosen Berprestasi</h4>
+                                        <p>Universitas Negeri Jakarta, 2020</p>
+                                        <small>Peringkat 1 nasional kategori penelitian</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="cl-6 cm-12 cs-12">
+                            <div class="lmn lmn-plain bx-itm" style="height: 100%;">
+                                <h3 class="section-title">
+                                    <i class="ti ti-device-desktop"></i>Proyek Penelitian
+                                </h3>
+                                <div class="pl-box pl-box-1">
+                                    <div class="bx-itm bx-green white">
+                                        <h4>AI untuk Pendidikan</h4>
+                                        <p>Riset Kementistekdikti 2022-2024</p>
+                                        <small>Dana: Rp 1.2 Miliar</small>
+                                    </div>
+                                    <div class="bx-itm bx-blue white">
+                                        <h4>NLP Bahasa Daerah</h4>
+                                        <p>Hibah Kompetitif Nasional 2021-2023</p>
+                                        <small>Dana: Rp 800 Juta</small>
+                                    </div>
+                                    <div class="bx-itm bx-gray">
+                                        <h4>Sistem Pakar Medis</h4>
+                                        <p>Kolaborasi dengan RSUP Persahabatan</p>
+                                        <small>2020-2022</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <!-- Footer -->
+    <footer class="bio-footer">
+        <div class="lmn lmn-compact">
+            <div class="footer-content">
+                <p>© 2024 Prof. Dr. Ahmad Rahman, M.Sc. | Biografi Akademik Professional</p>
+                <div class="social-links">
+                    <a href="#" class="social-link" title="LinkedIn"><i class="ti ti-brand-linkedin"></i></a>
+                    <a href="#" class="social-link" title="Google Scholar"><i class="ti ti-brand-google"></i></a>
+                    <a href="#" class="social-link" title="ResearchGate"><i class="ti ti-brand-tabler"></i></a>
+                    <a href="#" class="social-link" title="ORCID"><i class="ti ti-id"></i></a>
+                    <a href="#" class="social-link" title="Scopus"><i class="ti ti-database"></i></a>
+                </div>
+                <p>Terakhir diperbarui: Desember 2024 | H-index: 24 | Citation: 1,240</p>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- Tombol Print -->
+    <button class="print-button" onclick="window.print()" title="Cetak CV">
+        <i class="ti ti-printer"></i>
+    </button>
+    
+    <!-- JavaScript -->
+    <script src="https://cdn.jsdelivr.net/gh/alicom13/viewtable/js/viewtable-v1.2.1.min.js"></script>
+    <script>
+        // Inisialisasi Polos Framework
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Biografi Akademik loaded');
+            
+            // **PERBAIKAN: Inisialisasi tabs yang benar**
+            function initTabs() {
+                const tabButtons = document.querySelectorAll('.tab-button');
+                const tabContents = document.querySelectorAll('.tab-content');
+                
+                // Fungsi untuk menampilkan tab
+                function showTab(tabId) {
+                    // Sembunyikan semua konten tab
+                    tabContents.forEach(content => {
+                        content.classList.remove('active');
+                    });
+                    
+                    // Hapus active dari semua tombol
+                    tabButtons.forEach(button => {
+                        button.classList.remove('active');
+                    });
+                    
+                    // Tampilkan tab yang dipilih
+                    const selectedTab = document.getElementById(tabId);
+                    if (selectedTab) {
+                        selectedTab.classList.add('active');
+                    }
+                    
+                    // Tambahkan active ke tombol yang sesuai
+                    const activeButton = document.querySelector(`[data-tab="${tabId}"]`);
+                    if (activeButton) {
+                        activeButton.classList.add('active');
+                    }
+                }
+                
+                // Event listener untuk setiap tombol tab
+                tabButtons.forEach(button => {
+                    button.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const tabId = this.getAttribute('data-tab');
+                        showTab(tabId);
+                    });
+                });
+                
+                // Tampilkan tab pertama secara default
+                if (tabButtons.length > 0) {
+                    const firstTabId = tabButtons[0].getAttribute('data-tab');
+                    showTab(firstTabId);
+                }
+            }
+            
+            // Panggil fungsi initTabs
+            initTabs();
+            
+            // Inisialisasi ViewTable jika tersedia
+            if (typeof ViewTable !== 'undefined') {
+                const tables = document.querySelectorAll('.table');
+                tables.forEach(table => {
+                    new ViewTable(table, {
+                        searchable: true,
+                        sortable: true,
+                        pagination: true,
+                        entries: 5,
+                        entriesOptions: [5, 10, 20]
+                    });
+                });
+            }
+            
+            // Tambahkan interaktivitas pada box items
+            document.querySelectorAll('.bx-itm').forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-5px)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                });
+            });
+            
+            // Animasi untuk timeline items
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+            
+            const observer = new IntersectionObserver(function(entries) {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, observerOptions);
+            
+            // Terapkan animasi pada timeline items
+            document.querySelectorAll('.timeline-item').forEach(item => {
+                item.style.opacity = '0';
+                item.style.transform = 'translateY(20px)';
+                item.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                observer.observe(item);
+            });
+        });
+    </script>
+</body>
+</html>
