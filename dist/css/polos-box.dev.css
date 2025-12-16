@@ -1,0 +1,241 @@
+/*!
+ * Polos Box v1.0 - Card/Box Component
+ * Padding: Reduced 50% horizontal, 75% on mobile
+ * Compatible with Polos Core CSS
+ * Breakpoints: Small (≤575.98px), Medium (576px-767.98px), Large (≥768px)
+ * Licensed under Unlicense - Free for any use
+ * https://waliweb.com/
+ */
+
+/* ===== BASE BOX CONTAINER ===== */
+.pl-box {
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    background: #fff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: all 0.3s ease;
+    margin-bottom: 1rem;
+    width: 100%;
+}
+
+/* ===== BOX STRUCTURE ELEMENTS ===== */
+/* Box Header - Reduced 50% */
+.bx-hd {
+    padding: 1rem 0.625rem; /* FROM: 1rem 1.25rem (50% reduced) */
+    border-bottom: 1px solid #e9ecef;
+    background: #f8f9fa;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Box Content/Item - Reduced 50% */
+.bx-itm {
+    padding: 1.25rem 0.625rem; /* FROM: 1.25rem (50% reduced) */
+    min-height: 80px;
+}
+
+/* Box Footer - Reduced 50% */
+.bx-ft {
+    padding: 1rem 0.625rem; /* FROM: 1rem 1.25rem (50% reduced) */
+    border-top: 1px solid #e9ecef;
+    background: #f8f9fa;
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+}
+
+/* ===== MOBILE BREAKPOINT (≤575.98px) ===== */
+@media (max-width: 575.98px) {
+    .pl-box {
+        border-radius: 6px;
+        margin-bottom: 0.75rem;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+    }
+    
+    .bx-hd {
+        padding: 0.875rem 0.3125rem; /* Reduced 75% from original 1.25rem */
+        flex-wrap: wrap;
+    }
+    
+    .bx-itm {
+        padding: 1rem 0.3125rem; /* Reduced 75% from original 1.25rem */
+        min-height: 60px;
+    }
+    
+    .bx-ft {
+        padding: 0.875rem 0.3125rem; /* Reduced 75% from original 1.25rem */
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+}
+
+/* ===== BOX VARIANTS ===== */
+/* Compact Variant */
+.pl-box-compact {
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+.pl-box-compact .bx-ft,
+.pl-box-compact .bx-hd,
+.pl-box-compact .bx-itm {
+    padding: 0.75rem 0.5rem; /* Compact padding */
+}
+
+/* Mobile adjustment for compact */
+@media (max-width: 575.98px) {
+    .pl-box-compact .bx-ft,
+    .pl-box-compact .bx-hd,
+    .pl-box-compact .bx-itm {
+        padding: 0.625rem 0.25rem; /* Extra compact on mobile */
+    }
+}
+
+/* Clean Variant (no borders) */
+.pl-box-clean {
+    border: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    background: transparent;
+}
+
+.pl-box-clean .bx-ft,
+.pl-box-clean .bx-hd {
+    border: none;
+    background: transparent;
+}
+
+.pl-box-clean .bx-itm {
+    background: #fff;
+    border-radius: 6px;
+}
+
+/* Highlight Variant */
+.pl-box-highlight {
+    border-left: 4px solid #003ec4;
+}
+
+/* ===== COLOR VARIANTS ===== */
+.pl-box-blue {
+    border-color: #003ec4;
+}
+
+.pl-box-green {
+    border-color: #16a34a;
+}
+
+.pl-box-red {
+    border-color: #dc2626;
+}
+
+.pl-box-yellow {
+    border-color: #eab308;
+}
+
+.pl-box-purple {
+    border-color: #9333ea;
+}
+
+.pl-box-gray {
+    border-color: #6b7280;
+}
+
+/* ===== INTERACTIVE STATES ===== */
+.pl-box:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+}
+
+.pl-box.js-inpolos {
+    cursor: pointer;
+}
+
+.pl-box.js-inpolos:active {
+    transform: scale(0.99);
+}
+
+/* ===== BOX IN GRID CONTEXT ===== */
+.rw .pl-box {
+    margin-bottom: 0;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.rw .pl-box .bx-itm {
+    flex: 1;
+}
+
+/* ===== SPECIAL BOX TYPES ===== */
+/* Stat Box */
+.pl-box-stat .bx-itm {
+    text-align: center;
+    padding: 1.5rem 0.625rem;
+}
+
+.pl-box-stat .bx-hd {
+    border: none;
+    background: transparent;
+    justify-content: center;
+    padding-bottom: 0;
+    font-size: 0.875rem;
+    color: #6b7280;
+}
+
+/* Alert Box */
+.pl-box-alert {
+    border-left-width: 4px;
+}
+
+.pl-box-alert .bx-hd {
+    border: none;
+    font-weight: 600;
+    background: transparent;
+}
+
+/* Success Alert */
+.pl-box-alert.pl-box-green .bx-hd {
+    color: #16a34a;
+}
+
+/* Error Alert */
+.pl-box-alert.pl-box-red .bx-hd {
+    color: #dc2626;
+}
+
+/* Warning Alert */
+.pl-box-alert.pl-box-yellow .bx-hd {
+    color: #eab308;
+}
+
+/* ===== RESPONSIVE ADJUSTMENTS ===== */
+@media (max-width: 767.98px) {
+    .pl-box {
+        margin-bottom: 0.875rem;
+    }
+    
+    .bx-ft button,
+    .bx-ft .btn {
+        min-width: 120px;
+    }
+}
+
+/* ===== SIZE VARIANTS (Optional) ===== */
+.pl-box-sm {
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.pl-box-md {
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.pl-box-lg {
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
