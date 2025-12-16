@@ -1,0 +1,173 @@
+/*!
+ * Polos Tipografi v1.0 - Minimal Typography System
+ * Essentials only: headings, text sizes, weights, transforms, decorations
+ * Breakpoints: Small (≤575.98px), Medium (576px-767.98px), Large (≥768px)
+ * Compatible with Polos Core CSS
+ * Licensed under Unlicense - Free for any use
+ * https://waliweb.com/
+ */
+
+/* ===== RESET & BASE ===== */
+* {
+  box-sizing: border-box;
+}
+
+/* ===== BASE TYPOGRAPHY ===== */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  line-height: 1.6;
+  color: #333;
+}
+
+/* ===== RESPONSIVE HEADINGS ===== */
+/* Small/Mobile (≤575.98px) - DEFAULT */
+h1 { font-size: 1.75rem; font-weight: 700; line-height: 1.2; }
+h2 { font-size: 1.5rem; font-weight: 600; line-height: 1.3; }
+h3 { font-size: 1.25rem; font-weight: 600; line-height: 1.4; }
+h4 { font-size: 1.125rem; font-weight: 600; line-height: 1.4; }
+h5 { font-size: 1rem; font-weight: 600; line-height: 1.5; }
+h6 { font-size: 0.875rem; font-weight: 600; line-height: 1.5; }
+
+/* Medium/Tablet (576px - 767.98px) */
+@media (min-width: 576px) and (max-width: 767.98px) {
+  h1 { font-size: 2rem; }
+  h2 { font-size: 1.75rem; }
+  h3 { font-size: 1.5rem; }
+  h4 { font-size: 1.25rem; }
+}
+
+/* Large/Desktop (≥768px) */
+@media (min-width: 768px) {
+  h1 { font-size: 2.25rem; }
+  h2 { font-size: 2rem; }
+  h3 { font-size: 1.625rem; }
+}
+
+/* ===== TEXT SIZE UTILITIES ===== */
+.text-xs { font-size: 0.75rem; }      /* 12px */
+.text-sm { font-size: 0.875rem; }     /* 14px */
+.text-base { font-size: 1rem; }       /* 16px */
+.text-lg { font-size: 1.125rem; }     /* 18px */
+.text-xl { font-size: 1.25rem; }      /* 20px */
+.text-2xl { font-size: 1.5rem; }      /* 24px */
+.text-3xl { font-size: 1.875rem; }    /* 30px */
+
+/* Responsive text sizes - Tablet (576px-767.98px) */
+@media (min-width: 576px) and (max-width: 767.98px) {
+  .text-lg { font-size: 1.125rem; }
+  .text-xl { font-size: 1.25rem; }
+  .text-2xl { font-size: 1.5rem; }
+}
+
+/* Responsive text sizes - Desktop (≥768px) */
+@media (min-width: 768px) {
+  .text-lg { font-size: 1.25rem; }
+  .text-xl { font-size: 1.5rem; }
+  .text-2xl { font-size: 1.875rem; }
+}
+
+/* ===== FONT WEIGHT UTILITIES ===== */
+.fw-light { font-weight: 300; }
+.fw-normal { font-weight: 400; }
+.fw-medium { font-weight: 500; }
+.fw-semibold { font-weight: 600; }
+.fw-bold { font-weight: 700; }
+.fw-black { font-weight: 900; }
+
+/* ===== TEXT TRANSFORM UTILITIES ===== */
+.tt-up, .tt-uppercase { text-transform: uppercase; }
+.tt-low, .tt-lowercase { text-transform: lowercase; }
+.tt-cap, .tt-capitalize { text-transform: capitalize; }
+.tt-none { text-transform: none; }
+
+/* ===== TEXT DECORATION UTILITIES ===== */
+.tx-u, .tx-underline { text-decoration: underline; }
+.tx-o, .tx-overline { text-decoration: overline; }
+.tx-s, .tx-strike, .tx-strikethrough { text-decoration: line-through; }
+.tx-n, .tx-none { text-decoration: none; }
+
+/* ===== TEXT ALIGNMENT UTILITIES ===== */
+.text-left { text-align: left; }
+.text-center { text-align: center; }
+.text-right { text-align: right; }
+.text-justify { text-align: justify; }
+
+/* ===== RESPONSIVE TEXT ALIGNMENT (BAWAAN ANDA) ===== */
+/* Center text on mobile only (≤575.98px) */
+.text-center-mobile {
+  text-align: center;
+}
+
+@media (min-width: 576px) {
+  .text-center-mobile {
+    text-align: left;
+  }
+}
+
+/* ===== LINE HEIGHT UTILITIES ===== */
+.lh-tight { line-height: 1.25; }
+.lh-normal { line-height: 1.6; }
+.lh-loose { line-height: 2; }
+
+/* ===== LETTER SPACING ===== */
+.tracking-tight { letter-spacing: -0.05em; }
+.tracking-normal { letter-spacing: 0; }
+.tracking-wide { letter-spacing: 0.05em; }
+
+/* ===== FONT STYLE ===== */
+.fs-italic { font-style: italic; }
+.fs-normal { font-style: normal; }
+
+/* ===== CODE & PRE STYLES (Essential) ===== */
+code, kbd, pre, samp {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.875em;
+}
+
+code {
+  color: #dc2626;
+  background-color: #fef2f2;
+  padding: 0.125rem 0.25rem;
+  border-radius: 0.25rem;
+}
+
+pre {
+  background-color: #f8f9fa;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.375rem;
+  padding: 1rem;
+  overflow: auto;
+  line-height: 1.5;
+}
+
+/* ===== BLOCKQUOTE (Essential for content) ===== */
+blockquote {
+  border-left: 4px solid #e5e7eb;
+  padding-left: 1rem;
+  margin-left: 0;
+  margin-right: 0;
+  font-style: italic;
+  color: #6b7280;
+}
+
+/* ===== LINKS (Essential) ===== */
+a {
+  color: #003ec4;
+  text-decoration: none;
+}
+
+a:hover {
+  color: #002a8a;
+  text-decoration: underline;
+}
+
+/* ===== MOBILE OPTIMIZATIONS (≤575.98px) ===== */
+@media (max-width: 575.98px) {
+  body {
+    font-size: 0.9375rem; /* 15px */
+    line-height: 1.5;
+  }
+  
+  .text-lg { font-size: 1.125rem; }
+  .text-xl { font-size: 1.25rem; }
+}
