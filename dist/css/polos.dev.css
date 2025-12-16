@@ -1,0 +1,282 @@
+/*!
+ * Polos Core v1.7 - Essential Grid System & Page Component
+ * Includes: 12-Column Responsive Grid + Laman Page Component
+ * Breakpoints: Mobile (≤575.98px), Tablet (576px-767.98px), Desktop (≥768px)
+ * Class Prefix: c- (cl-, cm-, cs-) for no conflict
+ * Licensed under Unlicense - Free for any use
+ * https://waliweb.com/
+ */
+
+/* ===== CSS RESET & BASE ===== */
+.polos *,
+.polos *::before,
+.polos *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* ===== GRID SYSTEM ===== */
+.rw {
+    display: grid;
+    gap: clamp(.25em, 1vw, .5em);
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    width: 100%;
+}
+
+.rw>* {
+    min-width: 0;
+    overflow-wrap: break-word;
+}
+
+/* Small screens (≤575.98px) */
+.cs-1 { grid-column: span 1; }
+.cs-2 { grid-column: span 2; }
+.cs-3 { grid-column: span 3; }
+.cs-4 { grid-column: span 4; }
+
+/* Auto column (content-based width) */
+.c-auto {
+    grid-column: auto;
+    width: max-content;
+}
+
+.c-auto>* {
+    min-width: 0;
+}
+
+/* Medium screens (576px-767.98px) */
+@media (min-width: 576px) and (max-width: 767.98px) {
+    .rw {
+        grid-template-columns: repeat(8, minmax(0, 1fr));
+    }
+    
+    .cm-1 { grid-column: span 1; }
+    .cm-2 { grid-column: span 2; }
+    .cm-3 { grid-column: span 3; }
+    .cm-4 { grid-column: span 4; }
+    .cm-5 { grid-column: span 5; }
+    .cm-6 { grid-column: span 6; }
+    .cm-7 { grid-column: span 7; }
+    .cm-8 { grid-column: span 8; }
+}
+
+/* Large screens (≥768px) */
+@media (min-width: 768px) {
+    .rw {
+        grid-template-columns: repeat(12, minmax(0, 1fr));
+    }
+    
+    .cl-1 { grid-column: span 1; }
+    .cl-2 { grid-column: span 2; }
+    .cl-3 { grid-column: span 3; }
+    .cl-4 { grid-column: span 4; }
+    .cl-5 { grid-column: span 5; }
+    .cl-6 { grid-column: span 6; }
+    .cl-7 { grid-column: span 7; }
+    .cl-8 { grid-column: span 8; }
+    .cl-9 { grid-column: span 9; }
+    .cl-10 { grid-column: span 10; }
+    .cl-11 { grid-column: span 11; }
+    .cl-12 { grid-column: span 12; }
+}
+
+/* ===== GRID GAP UTILITIES ===== */
+.g-0 { gap: 0; }
+.g-sm { gap: clamp(.125em, .5vw, .5em); }
+.g-lg { gap: clamp(.75em, 4vw, 2em); }
+
+/* ===== GRID ALIGNMENT (Intrinsic to Grid System) ===== */
+/* Vertical Alignment (gv = grid vertical) */
+.gv-start { align-items: start; }
+.gv-center { align-items: center; }
+.gv-end { align-items: end; }
+.gv-stretch { align-items: stretch; }
+
+/* Horizontal Justification (gh = grid horizontal) */
+.gh-start { justify-content: start; }
+.gh-center { justify-content: center; }
+.gh-end { justify-content: end; }
+.gh-between { justify-content: space-between; }
+.gh-around { justify-content: space-around; }
+
+/* ===== LAMAN PAGE COMPONENT ===== */
+.lmn {
+    margin: 0 auto;
+    max-width: 1200px;
+    width: 100%;
+    box-shadow: 2px 6px 15px 0 rgba(69, 65, 78, 0.1);
+    border-radius: 8px;
+    background: #fff;
+}
+
+/* Laman in content areas */
+.content .lmn,
+.main-content .lmn,
+main .lmn {
+    margin: 0.5rem auto;
+    max-width: calc(100% - 1rem);
+}
+
+/* Laman Header */
+.lmn-hd {
+    padding: 1rem 0.75rem; /* Reduced 50% from original */
+    background-color: transparent;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+}
+
+/* Laman Body */
+.lmn-bd {
+    padding: 1.25rem 0.75rem; /* Reduced 50% from original */
+    min-height: 200px;
+}
+
+/* Laman Footer */
+.lmn-ft {
+    padding: 1rem 0.75rem; /* Reduced 50% from original */
+    background-color: transparent;
+    border-top: 1px solid rgba(0, 0, 0, 0.125);
+    text-align: center;
+}
+
+/* ===== MOBILE BREAKPOINT (≤575.98px) ===== */
+@media (max-width: 575.98px) {
+    /* Grid adjustments */
+    .rw {
+        gap: clamp(.125em, .75vw, .375em);
+    }
+    
+    /* Laman adjustments */
+    .lmn {
+        border-radius: 6px;
+        box-shadow: 1px 3px 8px 0 rgba(69, 65, 78, 0.08);
+    }
+    
+    .lmn-hd {
+        padding: 1rem 0.375rem; /* Reduced 75% from original */
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+    
+    .lmn-bd {
+        padding: 1.25rem 0.375rem; /* Reduced 75% from original */
+        min-height: 150px;
+    }
+    
+    .lmn-ft {
+        padding: 1rem 0.375rem; /* Reduced 75% from original */
+    }
+}
+
+/* ===== LAMAN VARIANTS ===== */
+/* Size Variants */
+.lmn-compact {
+    max-width: 1000px;
+}
+
+.lmn-compact .lmn-bd {
+    padding: 1rem 0.625rem; /* Reduced 50% from 1.25rem */
+}
+
+.lmn-wide {
+    max-width: 1400px;
+}
+
+.lmn-full {
+    max-width: calc(100% - 2rem);
+    margin: 1rem auto;
+}
+
+.lmn-fluid {
+    max-width: 100%;
+    margin: 0;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+/* Style Variants */
+.lmn-plain {
+    box-shadow: none;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.lmn-bg-light {
+    background: #f8f9fa;
+}
+
+.lmn-bg-dark {
+    background: #1a1a1a;
+    color: #fff;
+}
+
+.lmn-bg-dark .lmn-hd,
+.lmn-bg-dark .lmn-ft {
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.lmn-border-none {
+    border: none;
+}
+
+.lmn-border-thick {
+    border: 2px solid rgba(0, 0, 0, 0.1);
+}
+
+/* Mobile adjustments for variants */
+@media (max-width: 575.98px) {
+    .lmn-compact .lmn-bd {
+        padding: 1rem 0.3125rem; /* Reduced 75% from 1.25rem */
+    }
+    
+    .lmn-full {
+        max-width: 100%;
+        margin: 0;
+        border-radius: 0;
+    }
+    
+    .content .lmn,
+    .main-content .lmn,
+    main .lmn {
+        margin: 0.25rem auto;
+        max-width: calc(100% - 0.5rem);
+    }
+    
+    .lmn-fluid {
+        margin: 0;
+    }
+}
+
+/* Tablet adjustments */
+@media (max-width: 767.98px) {
+    .lmn-full {
+        max-width: calc(100% - 1rem);
+        margin: 0.5rem auto;
+    }
+}
+
+/* ===== GRID IN LAMAN OPTIMIZATION ===== */
+.lmn-bd .rw {
+    gap: clamp(.375em, 1.25vw, .75em);
+}
+
+.lmn-compact .lmn-bd .rw {
+    gap: clamp(.25em, 1vw, .5em);
+}
+
+/* ===== PRINT STYLES ===== */
+@media print {
+    .lmn {
+        box-shadow: none;
+        border: 1px solid #ddd;
+        max-width: 100%;
+        margin: 0;
+    }
+    
+    .lmn-hd,
+    .lmn-ft {
+        border-color: #ddd;
+    }
+}
