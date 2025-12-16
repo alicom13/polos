@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Polos CSS - Demo Lengkap</title>
+    
+    <!-- Load Polos CSS Files -->
+    <link rel="stylesheet" href="polos-core.css">
+    <link rel="stylesheet" href="polos-tipografi.css">
+    <link rel="stylesheet" href="polos-box.css">
+    
+    <style>
+        /* Custom styles untuk demo */
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 1rem;
+        }
+        
+        .demo-section {
+            margin-bottom: 3rem;
+            padding: 1.5rem;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .demo-title {
+            border-bottom: 3px solid #003ec4;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .color-swatch {
+            width: 40px;
+            height: 40px;
+            border-radius: 6px;
+            display: inline-block;
+            margin-right: 10px;
+            vertical-align: middle;
+            border: 1px solid #ddd;
+        }
+        
+        .code-block {
+            background: #1a1a1a;
+            color: #f8f8f2;
+            padding: 1rem;
+            border-radius: 6px;
+            font-family: monospace;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+        
+        .grid-visual {
+            background: #f8f9fa;
+            border: 2px dashed #dee2e6;
+            padding: 1rem;
+            border-radius: 8px;
+        }
+        
+        .grid-item {
+            background: #003ec4;
+            color: white;
+            padding: 1rem;
+            border-radius: 4px;
+            text-align: center;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .feature-badge {
+            display: inline-block;
+            background: #16a34a;
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- HEADER -->
+    <div class="lmn lmn-bg-light mb-4">
+        <div class="lmn-hd">
+            <div>
+                <h1 class="fw-bold blue1">Polos CSS</h1>
+                <p class="text-sm text-muted">Modern CSS Grid System & Typography</p>
+            </div>
+            <div class="pt-center">
+                <span class="feature-badge">v1.7</span>
+                <span class="feature-badge bg-green1">Responsive</span>
+                <span class="feature-badge bg-purple1">Minimal</span>
+            </div>
+        </div>
+        
+        <div class="lmn-bd">
+            <div class="rw gv-center">
+                <div class="cs-12 cl-8">
+                    <h2 class="fw-semibold">Sistem Grid & Tipografi Lengkap</h2>
+                    <p class="text-lg lh-normal">
+                        Polos CSS menyediakan pondasi dasar untuk membangun antarmuka web modern 
+                        dengan sistem grid responsif dan tipografi yang terstruktur.
+                    </p>
+                </div>
+                <div class="cs-12 cl-4 text-center">
+                    <div class="pl-box pl-box-blue">
+                        <div class="bx-itm">
+                            <div class="text-3xl fw-bold">3</div>
+                            <div class="text-sm">Core Modules</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT GRID -->
+    <div class="rw g-0 gh-between" style="gap: 2rem;">
+        
+        <!-- LEFT COLUMN: GRID SYSTEM -->
+        <div class="cs-12 cl-8">
+            
+            <!-- SECTION 1: GRID SYSTEM -->
+            <div class="demo-section">
+                <h3 class="demo-title tt-up blue1">Grid System</h3>
+                
+                <h4 class="fw-semibold">Responsive Grid Columns</h4>
+                <p class="text-sm text-muted mb-3">
+                    Breakpoints: Small (≤575.98px), Medium (576px-767.98px), Large (≥768px)
+                </p>
+                
+                <div class="grid-visual mb-4">
+                    <h5 class="fw-medium mb-2">Default Grid (.rw)</h5>
+                    <div class="rw g-sm">
+                        <div class="cs-6 cl-3">
+                            <div class="grid-item">.cs-6 .cl-3</div>
+                        </div>
+                        <div class="cs-6 cl-3">
+                            <div class="grid-item">.cs-6 .cl-3</div>
+                        </div>
+                        <div class="cs-6 cl-3">
+                            <div class="grid-item">.cs-6 .cl-3</div>
+                        </div>
+                        <div class="cs-6 cl-3">
+                            <div class="grid-item">.cs-6 .cl-3</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="grid-visual">
+                    <h5 class="fw-medium mb-2">Grid dengan Alignment</h5>
+                    <div class="rw gv-center gh-between g-lg">
+                        <div class="cs-12 cm-6 cl-4">
+                            <div class="grid-item" style="background: #16a34a;">.gv-center</div>
+                        </div>
+                        <div class="cs-12 cm-6 cl-4">
+                            <div class="grid-item" style="background: #16a34a;">Vertical Center</div>
+                        </div>
+                        <div class="cs-12 cm-6 cl-4">
+                            <div class="grid-item" style="background: #16a34a;">.gh-between</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="code-block mt-3">
+&lt;div class="rw gv-center gh-between"&gt;<br>
+&nbsp;&nbsp;&lt;div class="cs-12 cm-6 cl-4"&gt;Item 1&lt;/div&gt;<br>
+&nbsp;&nbsp;&lt;div class="cs-12 cm-6 cl-4"&gt;Item 2&lt;/div&gt;<br>
+&nbsp;&nbsp;&lt;div class="cs-12 cm-6 cl-4"&gt;Item 3&lt;/div&gt;<br>
+&lt;/div&gt;
+                </div>
+            </div>
+            
+            <!-- SECTION 2: TYPOGRAPHY -->
+            <div class="demo-section">
+                <h3 class="demo-title tt-up blue1">Tipografi System</h3>
+                
+                <div class="rw gv-start">
+                    <div class="cs-12 cl-6">
+                        <h4 class="fw-bold">Headings Responsif</h4>
+                        <h1 class="text-muted">H1 - 2.25rem</h1>
+                        <h2>H2 - 2rem</h2>
+                        <h3>H3 - 1.625rem</h3>
+                        <h4>H4 - 1.375rem</h4>
+                        <h5>H5 - 1rem</h5>
+                        <h6>H6 - 0.875rem</h6>
+                    </div>
+                    
+                    <div class="cs-12 cl-6">
+                        <h4 class="fw-bold">Text Utilities</h4>
+                        
+                        <p class="text-lg fw-bold">Large Bold Text</p>
+                        <p class="text-base fw-normal">Normal Weight</p>
+                        <p class="text-sm fw-light tx-u">Small Light Underline</p>
+                        
+                        <div class="mt-3">
+                            <p class="tt-up">uppercase text</p>
+                            <p class="tt-low">LOWERCASE TEXT</p>
+                            <p class="tt-cap">capitalized text</p>
+                        </div>
+                        
+                        <div class="mt-3">
+                            <p><span class="tx-u">Underlined</span> | 
+                               <span class="tx-s">Strikethrough</span> | 
+                               <span class="tx-n">No Decoration</span></p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-4">
+                    <h4 class="fw-semibold">Responsive Text Alignment</h4>
+                    <p class="text-center-mobile tx-u">
+                        Teks ini rata tengah di mobile, rata kiri di tablet/desktop
+                    </p>
+                </div>
+            </div>
+            
+            <!-- SECTION 3: LAMAN COMPONENT -->
+            <div class="demo-section">
+                <h3 class="demo-title tt-up blue1">Laman Component</h3>
+                
+                <div class="lmn lmn-compact mb-4">
+                    <div class="lmn-hd">
+                        <h4 class="fw-bold">.lmn-compact</h4>
+                        <button class="text-sm px-3 py-1 bg-blue1 white rounded">Action</button>
+                    </div>
+                    <div class="lmn-bd">
+                        <p>Container dengan max-width 1000px. Padding horizontal reduced 50%.</p>
+                        <div class="rw">
+                            <div class="cs-6">
+                                <div class="pl-box pl-box-green">
+                                    <div class="bx-itm text-center">
+                                        <div class="text-xl fw-bold">128</div>
+                                        <div class="text-sm">Items</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="cs-6">
+                                <div class="pl-box pl-box-blue">
+                                    <div class="bx-itm text-center">
+                                        <div class="text-xl fw-bold">64</div>
+                                        <div class="text-sm">Users</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="lmn-ft">
+                        <small class="text-muted">Footer dengan border top</small>
+                    </div>
+                </div>
+                
+                <div class="lmn lmn-full lmn-bg-dark">
+                    <div class="lmn-bd">
+                        <h4 class="white fw-bold">.lmn-full .lmn-bg-dark</h4>
+                        <p class="white">Full width container dengan background gelap.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- RIGHT COLUMN: UTILITIES & BOX -->
+        <div class="cs-12 cl-4">
+            
+            <!-- SECTION 4: BOX COMPONENT -->
+            <div class="demo-section">
+                <h3 class="demo-title tt-up blue1">Box Component</h3>
+                
+                <div class="pl-box mb-3">
+                    <div class="bx-hd">
+                        <h5 class="fw-semibold">Standard Box</h5>
+                        <span class="text-sm text-muted">• • •</span>
+                    </div>
+                    <div class="bx-itm">
+                        <p class="text-sm">Box dengan header, content, dan footer.</p>
+                        <p class="text-xs text-muted">Padding horizontal: 0.625rem</p>
+                    </div>
+                    <div class="bx-ft">
+                        <button class="text-sm px-2 py-1 rounded" style="background: #e5e7eb;">Cancel</button>
+                        <button class="text-sm px-2 py-1 bg-blue1 white rounded">OK</button>
+                    </div>
+                </div>
+                
+                <div class="pl-box pl-box-clean mb-3">
+                    <div class="bx-itm">
+                        <h6 class="fw-medium">.pl-box-clean</h6>
+                        <p class="text-sm">Box tanpa border, shadow yang lebih soft.</p>
+                    </div>
+                </div>
+                
+                <div class="pl-box pl-box-highlight pl-box-red">
+                    <div class="bx-itm">
+                        <h6 class="fw-medium red1">.pl-box-highlight</h6>
+                        <p class="text-sm">Border kiri tebal untuk emphasis.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- SECTION 5: TYPOGRAPHY UTILITIES -->
+            <div class="demo-section">
+                <h3 class="demo-title tt-up blue1">Utilities Lengkap</h3>
+                
+                <h5 class="fw-medium mb-2">Font Weight</h5>
+                <div class="rw g-sm mb-3">
+                    <div class="cs-6">
+                        <p class="fw-light">.fw-light</p>
+                        <p class="fw-normal">.fw-normal</p>
+                        <p class="fw-medium">.fw-medium</p>
+                    </div>
+                    <div class="cs-6">
+                        <p class="fw-semibold">.fw-semibold</p>
+                        <p class="fw-bold">.fw-bold</p>
+                        <p class="fw-black">.fw-black</p>
+                    </div>
+                </div>
+                
+                <h5 class="fw-medium mb-2">Text Sizes</h5>
+                <p class="text-xs">.text-xs (12px)</p>
+                <p class="text-sm">.text-sm (14px)</p>
+                <p class="text-base">.text-base (16px)</p>
+                <p class="text-lg">.text-lg (18px)</p>
+                <p class="text-xl">.text-xl (20px)</p>
+                <p class="text-2xl fw-bold">.text-2xl (24px)</p>
+                
+                <h5 class="fw-medium mb-2 mt-3">Line Height</h5>
+                <p class="lh-tight">.lh-tight - Line height ketat untuk judul.</p>
+                <p class="lh-normal">.lh-normal - Line height normal untuk paragraf.</p>
+                <p class="lh-loose">.lh-loose - Line height longgar untuk readability.</p>
+                
+                <h5 class="fw-medium mb-2 mt-3">Letter Spacing</h5>
+                <p class="tracking-tight">.tracking-tight (rapat)</p>
+                <p class="tracking-normal">.tracking-normal (normal)</p>
+                <p class="tracking-wide">.tracking-wide (lebar)</p>
+            </div>
+            
+            <!-- SECTION 6: CODE & BLOCKQUOTE -->
+            <div class="demo-section">
+                <h3 class="demo-title tt-up blue1">Special Elements</h3>
+                
+                <h5 class="fw-medium mb-2">Code Styling</h5>
+                <p>Gunakan <code>.rw</code> untuk membuat grid container.</p>
+                
+                <pre class="mt-2">
+// Contoh kode
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}</pre>
+                
+                <h5 class="fw-medium mb-2 mt-3">Blockquote</h5>
+                <blockquote>
+                    "Polos CSS menyediakan pondasi dasar tanpa bloat. 
+                    Developer bebas berkreasi dengan custom CSS."
+                    <footer class="text-sm text-muted mt-1">— Filosofi Polos</footer>
+                </blockquote>
+                
+                <h5 class="fw-medium mb-2 mt-3">Links</h5>
+                <p>
+                    <a href="#" class="tx-u">Underlined Link</a> | 
+                    <a href="#" class="tx-n">Clean Link</a>
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- FOOTER -->
+    <div class="lmn lmn-plain mt-4">
+        <div class="lmn-bd text-center">
+            <h4 class="fw-bold blue1">Polos CSS</h4>
+            <p class="text-sm text-muted">
+                Modern CSS Grid System & Typography • 
+                <span class="text-center-mobile">Responsive & Minimal</span>
+            </p>
+            <div class="rw gv-center gh-center mt-3">
+                <div class="cs-6 cl-3">
+                    <div class="pl-box pl-box-clean">
+                        <div class="bx-itm">
+                            <div class="text-lg fw-bold">Grid System</div>
+                            <div class="text-xs">.rw, .cs-, .cm-, .cl-</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="cs-6 cl-3">
+                    <div class="pl-box pl-box-clean">
+                        <div class="bx-itm">
+                            <div class="text-lg fw-bold">Typography</div>
+                            <div class="text-xs">.tt-*, .tx-*, .fw-*</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="cs-6 cl-3">
+                    <div class="pl-box pl-box-clean">
+                        <div class="bx-itm">
+                            <div class="text-lg fw-bold">Components</div>
+                            <div class="text-xs">.lmn, .pl-box</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="lmn-ft">
+            <p class="text-xs text-muted">
+                Licensed under Unlicense • Free for any use • v1.7
+            </p>
+        </div>
+    </div>
+    
+    <!-- MOBILE NOTICE -->
+    <div class="lmn lmn-full bg-yellow1 mt-4 d-none d-md-block">
+        <div class="lmn-bd text-center">
+            <p class="fw-bold">
+                <span class="tt-up">Tip:</span> Resize browser untuk melihat responsivitas!
+            </p>
+        </div>
+    </div>
+</body>
+</html>
