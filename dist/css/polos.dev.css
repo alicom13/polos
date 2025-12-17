@@ -280,3 +280,23 @@ main .lmn {
         border-color: #ddd;
     }
 }
+
+/* ===== DISPLAY BLOCK PER BREAKPOINT ===== */
+@media (min-width: 576px) { .d-sm { display: none; } }
+@media (max-width: 575.98px), (min-width: 768px) { .d-md { display: none; } }
+@media (max-width: 767.98px) { .d-lg { display: none; } }
+
+/* ===== DISPLAY FLEX PER BREAKPOINT ===== */
+@media (min-width: 576px) { .d-sm-flex { display: none; } }
+@media (max-width: 575.98px) { .d-sm-flex { display: flex; } }
+
+@media (max-width: 575.98px), (min-width: 768px) { .d-md-flex { display: none; } }
+@media (min-width: 576px) and (max-width: 767.98px) { .d-md-flex { display: flex; } }
+
+@media (max-width: 767.98px) { .d-lg-flex { display: none; } }
+@media (min-width: 768px) { .d-lg-flex { display: flex; } }
+
+/* ===== HIDE ELEMENT PER BREAKPOINT ===== */
+@media (max-width: 575.98px) { .h-sm { display: none; } }
+@media (min-width: 576px) and (max-width: 767.98px) { .h-md { display: none; } }
+@media (min-width: 768px) { .h-lg { display: none; } }
