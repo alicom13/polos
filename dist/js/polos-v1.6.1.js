@@ -354,6 +354,17 @@ class Polos {
                         this.closePopup(popupToClose.id);
                     }
                     break;
+                case 'confirm':
+                    const popupToConfirm = trigger.closest('.' + this.classes.popup.wrapper);
+                    if (popupToConfirm && popupToConfirm._popupOptions.onConfirm) {
+                        // Jalankan fungsi onConfirm terlebih dahulu
+                        popupToConfirm._popupOptions.onConfirm();
+                    }
+                    // Lalu tutup popup-nya
+                    if (popupToConfirm) {
+                        this.closePopup(popupToConfirm.id);
+                    }
+                    break;
                 case 'toggle-class':
                     if (targetSelector) {
                         const target = document.querySelector(targetSelector);
