@@ -2,8 +2,8 @@
  * Polos JS v1.6.1 - Production Version
  * Core: Responsive Grid, Screen Detection, Event System, Popup
  * Compatible with Polos CSS Framework
- * Â© 2025 Polos Style - MIT License
- * https://github.com/alicom13/polos
+ * @copyright 2025 Polos Style - MIT License
+ * @link : https://github.com/alicom13/polos
  */
 
 class Polos {
@@ -98,8 +98,10 @@ class Polos {
             });
         });
 
+        const gridElementChildren = grid.querySelectorAll(':scope > *');
+    
         gridConfig.forEach((item, idx) => {
-            const el = grid.children[idx];
+            const el = gridElementChildren[idx];
             if (!el) return;
 
             if (item.large >= 1 && item.large <= 12) el.classList.add("cl-" + item.large);
