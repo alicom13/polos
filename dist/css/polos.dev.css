@@ -281,20 +281,24 @@ main .lmn {
     }
 }
 
-/* ===== DISPLAY BLOCK PER BREAKPOINT ===== */
-@media (min-width: 576px) { .d-sm { display: none; } }
-@media (max-width: 575.98px), (min-width: 768px) { .d-md { display: none; } }
-@media (max-width: 767.98px) { .d-lg { display: none; } }
+/* ==================== DISPLAY UTILITIES ==================== */
+/* Display on Small (Mobile) */
+@media (max-width: 575.98px) {
+  .d-sm { display: block; }
+  .d-sm-flex { display: flex; }
+}
 
-/* ===== DISPLAY FLEX PER BREAKPOINT ===== */
-@media (min-width: 576px) { .d-sm-flex { display: none; } }
-@media (max-width: 575.98px) { .d-sm-flex { display: flex; } }
+/* Display on Medium (Tablet) */
+@media (min-width: 576px) and (max-width: 767.98px) {
+  .d-md { display: block; }
+  .d-md-flex { display: flex; }
+}
 
-@media (max-width: 575.98px), (min-width: 768px) { .d-md-flex { display: none; } }
-@media (min-width: 576px) and (max-width: 767.98px) { .d-md-flex { display: flex; } }
-
-@media (max-width: 767.98px) { .d-lg-flex { display: none; } }
-@media (min-width: 768px) { .d-lg-flex { display: flex; } }
+/* Display on Large (Desktop) */
+@media (min-width: 768px) {
+  .d-lg { display: block; }
+  .d-lg-flex { display: flex; }
+}
 
 /* ===== HIDE ELEMENT PER BREAKPOINT ===== */
 @media (max-width: 575.98px) { .h-sm { display: none; } }
