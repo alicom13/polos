@@ -4,339 +4,16 @@
  * Requires Polos JS v1.6.1+
  * © 2025 Polos Style - MIT License 
  */
-(function(global, factory) {
-    if (typeof global.p$ === 'function' && global.p$._version === '2.0.9') return;
-    
-    if (typeof module === 'object' && typeof module.exports === 'object') {
-        module.exports = factory(global, true);
-    } else {
-        factory(global, false);
-    }
-})(typeof window !== 'undefined' ? window : this, function(window, isNodeEnv) {
+(function(global) {
     "use strict";
-
-    // ==================== ENVIRONMENT DETECTION ====================
+    
+    if (typeof global.p$ === 'function' && global.p$._version === '2.1.0') return;
+    
     const isBrowser = typeof window !== 'undefined' && typeof document !== 'undefined';
     const isDev = isBrowser && window.__POLOS_DEV__ === true;
     
-    const isNode = (function() {
-        if (!isBrowser) return () => false;
-        if (typeof Node !== 'undefined') {
-            return (node) => node && node instanceof Node;
-        }
-        return (node) => node && typeof node.nodeType === 'number';
-    })();
-    
-    const isElement = (el) => {
-        if (!isNode(el)) return false;
-        try {
-            return el.nodeType === 1;
-        } catch (e) {
-            return false;
-        }
-    };
-
-    // ==================== CORE UTILITIES ====================
-    const toArray = (items) => Array.from(items || []);
-    const isFunction = (fn) => typeof fn === 'function';
-    const isString = (str) => typeof str === 'string';
-    const isObject = (obj) => obj && typeof obj === 'object';
-
-    // ==================== EVENT REGISTRY (OPTIMIZED) ====================
-    const EVENT_REGISTRY = Symbol('polos.events');
-    const REGISTERED_ELEMENTS = new WeakSet();
-    
-    const EventRegistry = {
-        init(element) {
-            if (!element[EVENT_REGISTRY]) {
-                element[EVENT_REGISTRY] = {
-                    handlers: new Map(),
-                    onceHandlers: new WeakMap()
-                };
-                REGISTERED_ELEMENTS.add(element);
-            }
-            return element[EVENT_REGISTRY];
-        },
-        
-        get(element) {
-            return element[EVENT_REGISTRY];
-        },
-        
-        add(element, event, originalHandler, wrapped, options = {}) {
-            const registry = this.init(element);
-            
-            if (!registry.handlers.has(event)) {
-                registry.handlers.set(event, new Map());
-            }
-            
-            const eventHandlers = registry.handlers.get(event);
-            const handlerKey = this._createHandlerKey(originalHandler, options);
-            
-            if (eventHandlers.has(handlerKey)) {
-                return false;
-            }
-            
-            eventHandlers.set(handlerKey, {
-                original: originalHandler,
-                wrapped: wrapped,
-                options: options,
-                isOnce: false
-            });
-            
-            return true;
-        },
-        
-        remove(element, event, handler, options = {}) {
-            const registry = this.get(element);
-            if (!registry) return false;
-            
-            let removed = false;
-            
-            const eventsToCheck = event ? [event] : Array.from(registry.handlers.keys());
-            
-            for (const eventName of eventsToCheck) {
-                const eventHandlers = registry.handlers.get(eventName);
-                if (!eventHandlers) continue;
-                
-                if (!handler) {
-                    for (const [, data] of eventHandlers.entries()) {
-                        element.removeEventListener(eventName, data.wrapped, data.options);
-                    }
-                    eventHandlers.clear();
-                    removed = true;
-                } else {
-                    const targets = this._findHandlerMatches(eventHandlers, handler, options);
-                    
-                    for (const handlerKey of targets) {
-                        const data = eventHandlers.get(handlerKey);
-                        if (data) {
-                            element.removeEventListener(eventName, data.wrapped, data.options);
-                            eventHandlers.delete(handlerKey);
-                            
-                            if (data.isOnce) {
-                                registry.onceHandlers.delete(data.wrapped);
-                            }
-                            
-                            removed = true;
-                        }
-                    }
-                }
-                
-                if (eventHandlers.size === 0) {
-                    registry.handlers.delete(eventName);
-                }
-            }
-            
-            if (registry.handlers.size === 0) {
-                registry.onceHandlers = new WeakMap();
-                delete element[EVENT_REGISTRY];
-                REGISTERED_ELEMENTS.delete(element);
-            }
-            
-            return removed;
-        },
-        
-        trackOnce(element, wrapper, original, eventName) {
-            const registry = this.init(element);
-            registry.onceHandlers.set(wrapper, { original, eventName });
-            
-            const eventHandlers = registry.handlers.get(eventName);
-            if (eventHandlers) {
-                for (const [key, data] of eventHandlers.entries()) {
-                    if (data.original === original && data.wrapped === wrapper) {
-                        data.isOnce = true;
-                        break;
-                    }
-                }
-            }
-        },
-        
-        getHandlers(element, eventName) {
-            const registry = this.get(element);
-            if (!registry || !registry.handlers.has(eventName)) {
-                return [];
-            }
-            
-            const eventHandlers = registry.handlers.get(eventName);
-            const handlers = [];
-            
-            for (const [, data] of eventHandlers.entries()) {
-                const isOnce = data.isOnce || 
-                              (data.wrapped && registry.onceHandlers.has(data.wrapped));
-                
-                handlers.push({
-                    handler: data.original,
-                    wrapped: data.wrapped,
-                    options: data.options,
-                    isOnce: isOnce
-                });
-            }
-            
-            return handlers;
-        },
-        
-        clear(element) {
-            const registry = this.get(element);
-            if (!registry) return;
-            
-            for (const [eventName, eventHandlers] of registry.handlers.entries()) {
-                for (const [, data] of eventHandlers.entries()) {
-                    element.removeEventListener(eventName, data.wrapped, data.options);
-                }
-            }
-            
-            registry.handlers.clear();
-            registry.onceHandlers = new WeakMap();
-            delete element[EVENT_REGISTRY];
-            REGISTERED_ELEMENTS.delete(element);
-        },
-        
-        _createHandlerKey(handler, options) {
-            const optionsHash = this._hashOptions(options);
-            return `${handler.toString().slice(0, 50)}_${optionsHash}`;
-        },
-        
-        _hashOptions(options) {
-            if (!isObject(options) || Object.keys(options).length === 0) {
-                return 'default';
-            }
-            
-            const keys = Object.keys(options).sort();
-            return keys.map(key => `${key}:${options[key]}`).join('|');
-        },
-        
-        _findHandlerMatches(eventHandlers, handler, options) {
-            const matches = [];
-            const targetKey = this._createHandlerKey(handler, options);
-            
-            if (eventHandlers.has(targetKey)) {
-                matches.push(targetKey);
-                return matches;
-            }
-            
-            for (const [key, data] of eventHandlers.entries()) {
-                if (data.original === handler) {
-                    matches.push(key);
-                }
-            }
-            
-            return matches;
-        }
-    };
-
-    // ==================== SELECTOR CACHE ====================
-    const selectorCache = new WeakMap();
-    
-    function generateSafeSelector(element) {
-        if (!element || !isElement(element) || !element.parentElement) {
-            return null;
-        }
-        
-        if (selectorCache.has(element)) {
-            return selectorCache.get(element);
-        }
-        
-        let selector = null;
-        
-        // Priority 1: ID
-        if (element.id && element.id.trim()) {
-            try {
-                selector = `#${CSS.escape(element.id)}`;
-            } catch (e) {
-                selector = `#${element.id.replace(/[!"#$%&'()*+,./:;<=>?@[\\\]^`{|}~]/g, '\\$&')}`;
-            }
-        }
-        // Priority 2: Existing data-polos-id
-        else if (element.hasAttribute('data-polos-id')) {
-            const polosId = element.getAttribute('data-polos-id');
-            try {
-                selector = `[data-polos-id="${CSS.escape(polosId)}"]`;
-            } catch (e) {
-                selector = `[data-polos-id="${polosId}"]`;
-            }
-        }
-        // Priority 3: Unique class selector
-        else if (element.className && typeof element.className === 'string') {
-            const classes = element.className.trim().split(/\s+/).filter(c => c);
-            if (classes.length > 0) {
-                try {
-                    const firstClass = CSS.escape(classes[0]);
-                    const parent = element.parentElement;
-                    
-                    // Check uniqueness
-                    if (parent) {
-                        const siblingsWithClass = Array.from(parent.querySelectorAll(`.${firstClass}`));
-                        if (siblingsWithClass.length === 1) {
-                            selector = `.${firstClass}`;
-                        } else {
-                            // Not unique, fallback to tag
-                            const tag = element.tagName.toLowerCase();
-                            selector = `${tag}.${firstClass}`;
-                        }
-                    } else {
-                        selector = `.${firstClass}`;
-                    }
-                } catch (e) {
-                    selector = `.${classes[0]}`;
-                }
-            }
-        }
-        
-        // Priority 4: Tag selector
-        if (!selector) {
-            const tag = element.tagName.toLowerCase();
-            selector = tag;
-        }
-        
-        if (selector) {
-            selectorCache.set(element, selector);
-        }
-        
-        return selector;
-    }
-
-    // ==================== MUTATION OBSERVER (OPTIMIZED) ====================
-    let domObserver = null;
-    
-    function setupDOMMutationObserver() {
-        if (!isBrowser || !window.MutationObserver) return;
-        
-        domObserver = new MutationObserver((mutations) => {
-            for (const mutation of mutations) {
-                if (mutation.type === 'childList') {
-                    for (const node of mutation.removedNodes) {
-                        if (isElement(node)) {
-                            selectorCache.delete(node);
-                            if (REGISTERED_ELEMENTS.has(node)) {
-                                EventRegistry.clear(node);
-                            }
-                        }
-                    }
-                }
-                else if (mutation.type === 'attributes') {
-                    const attrName = mutation.attributeName;
-                    if (attrName === 'id' || attrName === 'class' || attrName === 'data-polos-id') {
-                        selectorCache.delete(mutation.target);
-                    }
-                }
-            }
-        });
-        
-        domObserver.observe(document.documentElement || document.body, {
-            childList: true,
-            subtree: true,
-            attributes: true,
-            attributeFilter: ['id', 'class', 'data-polos-id']
-        });
-    }
-
-    if (isBrowser) {
-        setupDOMMutationObserver();
-    }
-
-    // ==================== NULL CHAIN ====================
-    const nullChain = (function() {
-        const methods = {
+    const createNullChain = () => {
+        const baseMethods = {
             on: () => nullChain,
             off: () => nullChain,
             one: () => nullChain,
@@ -370,51 +47,199 @@
             polosShowOn: () => nullChain,
             polosHideOn: () => nullChain,
             polosSetLoading: () => nullChain,
-            polosPopup: () => null
+            polosPopup: () => null,
+            __isNullChain: true
         };
         
-        const chain = Object.create(methods);
-        chain._el = [];
-        chain._length = 0;
-        return Object.freeze(chain);
-    })();
-
-    // ==================== CHAIN PROTOTYPE ====================
+        const nullChain = Object.freeze(Object.create(baseMethods));
+        nullChain._el = [];
+        nullChain._length = 0;
+        
+        return new Proxy(nullChain, {
+            get(target, prop) {
+                if (prop in target) return target[prop];
+                if (typeof prop === 'string') {
+                    if (prop.startsWith('polos') || prop.startsWith('_')) {
+                        return () => {
+                            if (isDev) console.warn(`p$: Method "${prop}" not available`);
+                            return target;
+                        };
+                    }
+                    return () => target;
+                }
+                return target[prop];
+            }
+        });
+    };
+    
+    const EVENT_REGISTRY = Symbol('polos.events');
+    const eventCounter = { count: 0 };
+    
+    const EventRegistry = {
+        init(element) {
+            if (!element[EVENT_REGISTRY]) {
+                element[EVENT_REGISTRY] = {
+                    handlers: new Map(),
+                    idCounter: 0
+                };
+            }
+            return element[EVENT_REGISTRY];
+        },
+        
+        _createHandlerKey(handler, options) {
+            const uniqueId = `${eventCounter.count++}_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
+            const handlerId = handler.name || 'anonymous';
+            const optionsHash = options ? JSON.stringify(options) : 'default';
+            return `${handlerId}_${uniqueId}_${optionsHash}`.slice(0, 100);
+        },
+        
+        add(element, event, handler, wrapper, options = {}) {
+            const registry = this.init(element);
+            const eventHandlers = registry.handlers.get(event) || new Map();
+            const handlerKey = this._createHandlerKey(handler, options);
+            
+            const handlerData = {
+                original: handler,
+                wrapped: wrapper,
+                options: options,
+                key: handlerKey,
+                id: handler.__p$eventId || Symbol(`event-${event}`)
+            };
+            
+            handler.__p$eventKey = handlerKey;
+            handler.__p$eventElement = element;
+            
+            eventHandlers.set(handlerKey, handlerData);
+            registry.handlers.set(event, eventHandlers);
+            
+            element.addEventListener(event, wrapper, options);
+            return handlerKey;
+        },
+        
+        remove(element, event, handler, options = {}) {
+            const registry = element[EVENT_REGISTRY];
+            if (!registry) return false;
+            
+            const eventHandlers = registry.handlers.get(event);
+            if (!eventHandlers) return false;
+            
+            let removed = false;
+            
+            if (!handler) {
+                for (const [key, data] of eventHandlers.entries()) {
+                    element.removeEventListener(event, data.wrapped, data.options);
+                    eventHandlers.delete(key);
+                }
+                removed = true;
+            } else {
+                const keysToRemove = [];
+                
+                for (const [key, data] of eventHandlers.entries()) {
+                    if (data.original === handler) {
+                        keysToRemove.push(key);
+                    } else if (handler.__p$eventKey && handler.__p$eventKey === key) {
+                        keysToRemove.push(key);
+                    } else if (options && JSON.stringify(data.options) === JSON.stringify(options)) {
+                        keysToRemove.push(key);
+                    }
+                }
+                
+                for (const key of keysToRemove) {
+                    const data = eventHandlers.get(key);
+                    if (data) {
+                        element.removeEventListener(event, data.wrapped, data.options);
+                        eventHandlers.delete(key);
+                        removed = true;
+                    }
+                }
+            }
+            
+            if (eventHandlers.size === 0) {
+                registry.handlers.delete(event);
+            }
+            if (registry.handlers.size === 0) {
+                delete element[EVENT_REGISTRY];
+            }
+            
+            return removed;
+        },
+        
+        clear(element) {
+            const registry = element[EVENT_REGISTRY];
+            if (!registry) return;
+            
+            for (const [event, eventHandlers] of registry.handlers.entries()) {
+                for (const [key, data] of eventHandlers.entries()) {
+                    element.removeEventListener(event, data.wrapped, data.options);
+                }
+            }
+            
+            delete element[EVENT_REGISTRY];
+        }
+    };
+    
+    const toArray = (items) => Array.from(items || []);
+    const isFunction = (fn) => typeof fn === 'function';
+    const isString = (str) => typeof str === 'string';
+    const isNode = (node) => node && typeof node.nodeType === 'number';
+    
     const Chain = function(elements) {
         if (!isBrowser) {
-            this._el = [];
-            this._length = 0;
-            return;
+            return createNullChain();
         }
         
         const seen = new WeakSet();
-        const flattened = [];
+        const result = [];
         
         const process = (item) => {
+            if (!item) return;
+            
             if (item instanceof Chain) {
                 item._el.forEach(process);
-            } else if (isNode(item) && !seen.has(item)) {
-                seen.add(item);
-                flattened.push(item);
+                return;
+            }
+            
+            if (item.nodeType === 1 || item === window || item === document) {
+                if (!seen.has(item)) {
+                    seen.add(item);
+                    result.push(item);
+                }
+                return;
+            }
+            
+            if (item.length !== undefined) {
+                for (let i = 0; i < item.length; i++) {
+                    const el = item[i];
+                    if (el && (el.nodeType === 1 || el instanceof Chain)) {
+                        process(el);
+                    } else if (isDev && el && !el.nodeType) {
+                        console.warn('p$: Invalid element in collection at index', i, el);
+                    }
+                }
+                return;
+            }
+            
+            if (isDev) {
+                console.warn('p$: Unsupported selector type:', typeof item, item);
             }
         };
         
-        toArray(elements).forEach(process);
+        process(elements);
+        this._el = result;
+        this._length = result.length;
         
-        this._el = flattened;
-        this._length = flattened.length;
+        if (this._length === 0) {
+            return createNullChain();
+        }
     };
+    
     const forEach = (method) => function(...args) {
-        const validElements = this._el.filter(el => 
+        this._el = this._el.filter(el => 
             isNode(el) && (!isBrowser || document.contains(el))
         );
+        this._length = this._el.length;
         
-        if (validElements.length !== this._length) {
-            this._el = validElements;
-            this._length = validElements.length;
-        }
-        
-        for (const el of validElements) {
+        for (const el of this._el) {
             try {
                 method(el, ...args);
             } catch (e) {
@@ -426,48 +251,41 @@
         
         return this;
     };
-
+    
     const fromFirst = (method) => function(...args) {
+        if (this._length === 0) return undefined;
         const el = this._el[0];
-        if (!el || !isNode(el) || (isBrowser && !document.contains(el))) {
-            return undefined;
-        }
+        if (!el || (isBrowser && !document.contains(el))) return undefined;
         return method(el, ...args);
     };
-
-    // ==================== EVENT HANDLING ====================
+    
     Chain.prototype.on = function(event, handler, options = {}) {
         if (!isFunction(handler)) return this;
         
         return forEach((el, evt, hdl, opts) => {
-            const wrapped = (e) => hdl.call(el, e);
+            const wrapper = (e) => {
+                try {
+                    hdl.call(el, e);
+                } catch (error) {
+                    if (isDev) console.error('p$: Event handler error:', error);
+                }
+            };
             
-            if (EventRegistry.add(el, evt, hdl, wrapped, opts)) {
-                el.addEventListener(evt, wrapped, opts);
-            }
+            EventRegistry.add(el, evt, hdl, wrapper, opts);
         }).call(this, event, handler, options);
     };
-
+    
     Chain.prototype.off = function(event, handler, options = {}) {
         return forEach((el, evt, hdl, opts) => {
             EventRegistry.remove(el, evt, hdl, opts);
         }).call(this, event, handler, options);
     };
-
+    
     Chain.prototype.one = function(event, handler, options = {}) {
         if (!isFunction(handler)) return this;
         
-        if (options.once) {
-            return this.on(event, handler, { ...options, once: true });
-        }
-        
         return forEach((el, evt, hdl, opts) => {
-            let called = false;
-            
-            const onceHandler = (e) => {
-                if (called) return;
-                called = true;
-                
+            const wrapper = (e) => {
                 try {
                     hdl.call(el, e);
                 } finally {
@@ -475,166 +293,384 @@
                 }
             };
             
-            EventRegistry.trackOnce(el, onceHandler, hdl, evt);
-            
-            if (EventRegistry.add(el, evt, hdl, onceHandler, opts)) {
-                el.addEventListener(evt, onceHandler, opts);
-            }
+            EventRegistry.add(el, evt, hdl, wrapper, { ...opts, once: true });
         }).call(this, event, handler, options);
     };
-
-    // ==================== VALUE HANDLING ====================
+    
     Chain.prototype.val = function(value) {
         if (value === undefined) {
             if (this._length === 0) return undefined;
             
+            if (this._length === 1) {
+                const el = this._el[0];
+                
+                if (el.matches('select[multiple]')) {
+                    return toArray(el.selectedOptions).map(opt => opt.value);
+                }
+                
+                if (el.type === 'checkbox' || el.type === 'radio') {
+                    return el.checked ? el.value : '';
+                }
+                
+                return 'value' in el ? el.value : '';
+            }
+            
             const values = [];
-            const checkboxGroups = new Map();
-            const radioGroups = new Map();
+            const processedGroups = new Set();
             
             this._el.forEach(el => {
-                if (el.matches('select[multiple]')) {
-                    const selected = toArray(el.selectedOptions).map(opt => opt.value);
-                    values.push(...selected);
-                } 
-                else if (el.type === 'checkbox' || el.type === 'radio') {
-                    const name = el.name;
-                    const form = el.form || el.closest('form');
-                    const formKey = form || document;
-                    
-                    if (el.type === 'radio') {
-                        if (name && el.checked) {
-                            const groupKey = `${formKey}_${name}`;
-                            if (!radioGroups.has(groupKey)) {
-                                radioGroups.set(groupKey, el.value);
-                            }
-                        }
-                    } else {
-                        if (el.checked) {
-                            if (!name) {
-                                values.push(el.value);
-                            } else {
-                                const groupKey = `${formKey}_${name}`;
-                                if (!checkboxGroups.has(groupKey)) {
-                                    checkboxGroups.set(groupKey, new Set());
-                                }
-                                checkboxGroups.get(groupKey).add(el.value);
-                            }
-                        }
+                if (el.type === 'checkbox' && el.name) {
+                    const groupKey = `checkbox_${el.name}`;
+                    if (!processedGroups.has(groupKey) && el.checked) {
+                        const groupValues = this._el
+                            .filter(e => e.name === el.name && e.checked)
+                            .map(e => e.value);
+                        values.push(...groupValues);
+                        processedGroups.add(groupKey);
                     }
-                }
-                else if ('value' in el) {
+                } else if (el.type === 'radio' && el.name && el.checked) {
+                    const groupKey = `radio_${el.name}`;
+                    if (!processedGroups.has(groupKey)) {
+                        values.push(el.value);
+                        processedGroups.add(groupKey);
+                    }
+                } else if (el.type === 'checkbox' && !el.name && el.checked) {
+                    values.push(el.value);
+                } else if ('value' in el && !el.name) {
                     values.push(el.value);
                 }
             });
-            
-            for (const radioValue of radioGroups.values()) {
-                values.push(radioValue);
-            }
-            
-            for (const checkboxSet of checkboxGroups.values()) {
-                values.push(...checkboxSet);
-            }
-            
-            if (this._length === 1) {
-                return values[0] !== undefined ? values[0] : '';
-            }
             
             return values;
         }
         
         return forEach((el, val) => {
-            if (el.matches('select[multiple]') && Array.isArray(val)) {
+            if (el.matches('select[multiple]')) {
+                const values = Array.isArray(val) ? val : [val];
                 toArray(el.options).forEach(opt => {
-                    opt.selected = val.includes(opt.value);
+                    opt.selected = values.includes(opt.value);
                 });
                 return;
             }
             
             if (el.type === 'checkbox' || el.type === 'radio') {
-                if (el.type === 'checkbox' && !el.name) {
-                    el.checked = !(val === false || val == null || val === '');
-                } else if (Array.isArray(val)) {
+                if (Array.isArray(val)) {
                     el.checked = val.includes(el.value);
-                } else if (el.type === 'radio') {
-                    el.checked = (el.value === String(val));
                 } else {
-                    el.checked = !(val === false || val == null || val === '');
+                    el.checked = (el.value === String(val) || val === true);
                 }
                 return;
             }
             
-            el.value = val !== null && val !== undefined ? String(val) : '';
+            if ('value' in el) {
+                el.value = val !== null && val !== undefined ? String(val) : '';
+            }
         }).call(this, value);
     };
-
-    // ==================== FACTORY FUNCTION ====================
+    
+    Chain.prototype.html = function(content) {
+        if (content === undefined) {
+            return fromFirst(el => el.innerHTML).call(this);
+        }
+        return forEach((el, html) => { el.innerHTML = html; }).call(this, content);
+    };
+    
+    Chain.prototype.text = function(content) {
+        if (content === undefined) {
+            return fromFirst(el => el.textContent).call(this);
+        }
+        return forEach((el, text) => { el.textContent = text; }).call(this, content);
+    };
+    
+    Chain.prototype.attr = function(name, value) {
+        if (value === undefined) {
+            return fromFirst(el => el.getAttribute(name)).call(this);
+        }
+        return forEach((el, attrName, attrValue) => {
+            attrValue != null ? 
+                el.setAttribute(attrName, attrValue) : 
+                el.removeAttribute(attrName);
+        }).call(this, name, value);
+    };
+    
+    Chain.prototype.css = function(name, value) {
+        if (value === undefined && typeof name === 'string') {
+            return fromFirst(el => getComputedStyle(el)[name]).call(this);
+        }
+        
+        return forEach((el, cssName, cssValue) => {
+            if (typeof cssName === 'object') {
+                Object.assign(el.style, cssName);
+            } else {
+                el.style[cssName] = cssValue;
+            }
+        }).call(this, name, value);
+    };
+    
+    Chain.prototype.addClass = function(className) {
+        return forEach((el, cls) => {
+            el.classList.add(cls);
+        }).call(this, className);
+    };
+    
+    Chain.prototype.removeClass = function(className) {
+        return forEach((el, cls) => {
+            el.classList.remove(cls);
+        }).call(this, className);
+    };
+    
+    Chain.prototype.hasClass = function(className) {
+        return fromFirst(el => el.classList.contains(className)).call(this);
+    };
+    
+    Chain.prototype.remove = function() {
+        return forEach((el) => {
+            EventRegistry.clear(el);
+            if (el.parentNode) {
+                el.parentNode.removeChild(el);
+            }
+        }).call(this);
+    };
+    
+    Chain.prototype.append = function(content) {
+        return forEach((el) => {
+            if (typeof content === 'string') {
+                el.insertAdjacentHTML('beforeend', content);
+            } else if (content instanceof Chain) {
+                content._el.forEach(child => el.appendChild(child.cloneNode(true)));
+            } else if (content && content.nodeType) {
+                el.appendChild(content.cloneNode(true));
+            }
+        }).call(this, content);
+    };
+    
+    Chain.prototype.prepend = function(content) {
+        return forEach((el) => {
+            if (typeof content === 'string') {
+                el.insertAdjacentHTML('afterbegin', content);
+            } else if (content instanceof Chain) {
+                content._el.reverse().forEach(child => el.insertBefore(child.cloneNode(true), el.firstChild));
+            } else if (content && content.nodeType) {
+                el.insertBefore(content.cloneNode(true), el.firstChild);
+            }
+        }).call(this, content);
+    };
+    
+    Chain.prototype.empty = function() {
+        return forEach((el) => {
+            while (el.firstChild) {
+                el.removeChild(el.firstChild);
+            }
+        }).call(this);
+    };
+    
+    Chain.prototype.find = function(selector) {
+        if (this._length === 0) return createNullChain();
+        
+        const elements = [];
+        this._el.forEach(el => {
+            const found = el.querySelectorAll(selector);
+            elements.push(...toArray(found));
+        });
+        
+        return new Chain(elements);
+    };
+    
+    Chain.prototype.parent = function() {
+        if (this._length === 0) return createNullChain();
+        
+        const parents = [];
+        this._el.forEach(el => {
+            if (el.parentNode) {
+                parents.push(el.parentNode);
+            }
+        });
+        
+        return new Chain(parents);
+    };
+    
+    Chain.prototype.children = function() {
+        if (this._length === 0) return createNullChain();
+        
+        const children = [];
+        this._el.forEach(el => {
+            children.push(...toArray(el.children));
+        });
+        
+        return new Chain(children);
+    };
+    
+    Chain.prototype.first = function() {
+        if (this._length === 0) return createNullChain();
+        return new Chain([this._el[0]]);
+    };
+    
+    Chain.prototype.last = function() {
+        if (this._length === 0) return createNullChain();
+        return new Chain([this._el[this._length - 1]]);
+    };
+    
+    Chain.prototype.eq = function(index) {
+        if (this._length === 0 || index >= this._length || index < 0) {
+            return createNullChain();
+        }
+        return new Chain([this._el[index]]);
+    };
+    
+    Chain.prototype.each = function(callback) {
+        if (!isFunction(callback)) return this;
+        
+        this._el.forEach((el, index) => {
+            try {
+                callback.call(el, index, el);
+            } catch (e) {
+                if (isDev) console.warn('p$: Error in each callback:', e);
+            }
+        });
+        
+        return this;
+    };
+    
+    Chain.prototype.map = function(callback) {
+        if (!isFunction(callback)) return [];
+        
+        return this._el.map((el, index) => {
+            try {
+                return callback.call(el, index, el);
+            } catch (e) {
+                if (isDev) console.warn('p$: Error in map callback:', e);
+                return null;
+            }
+        });
+    };
+    
+    Chain.prototype.filter = function(selector) {
+        if (this._length === 0) return createNullChain();
+        
+        const filtered = this._el.filter(el => {
+            if (isFunction(selector)) {
+                try {
+                    return selector.call(el, el);
+                } catch (e) {
+                    if (isDev) console.warn('p$: Error in filter callback:', e);
+                    return false;
+                }
+            }
+            return el.matches(selector);
+        });
+        
+        return new Chain(filtered);
+    };
+    
+    Chain.prototype.is = function(selector) {
+        if (this._length === 0) return false;
+        
+        const el = this._el[0];
+        if (isFunction(selector)) {
+            try {
+                return selector.call(el, el);
+            } catch (e) {
+                if (isDev) console.warn('p$: Error in is callback:', e);
+                return false;
+            }
+        }
+        return el.matches(selector);
+    };
+    
+    Chain.prototype.show = function() {
+        return forEach((el) => {
+            el.style.display = '';
+        }).call(this);
+    };
+    
+    Chain.prototype.hide = function() {
+        return forEach((el) => {
+            el.style.display = 'none';
+        }).call(this);
+    };
+    
+    Chain.prototype.data = function(key, value) {
+        if (value === undefined && typeof key === 'string') {
+            return fromFirst(el => el.dataset[key]).call(this);
+        }
+        
+        if (typeof key === 'object') {
+            return forEach((el, dataObj) => {
+                Object.entries(dataObj).forEach(([k, v]) => {
+                    el.dataset[k] = v;
+                });
+            }).call(this, key);
+        }
+        
+        return forEach((el, dataKey, dataValue) => {
+            if (dataValue === undefined || dataValue === null) {
+                delete el.dataset[dataKey];
+            } else {
+                el.dataset[dataKey] = dataValue;
+            }
+        }).call(this, key, value);
+    };
+    
+    Chain.prototype.removeAttr = function(name) {
+        return forEach((el, attrName) => {
+            el.removeAttribute(attrName);
+        }).call(this, name);
+    };
+    
     function p$(selector) {
-        if (!isBrowser) return nullChain;
+        if (!isBrowser) return createNullChain();
         
-        if (selector === undefined || selector === null) return nullChain;
-        
-        let elements = null;
-        
-        try {
-            if (isString(selector)) {
-                if (selector === '') return new Chain([]);
-                elements = document.querySelectorAll(selector);
-            } 
-            else if (selector instanceof Chain) {
-                return selector;
-            }
-            else if (selector === window || selector === document || isNode(selector)) {
-                elements = [selector];
-            }
-            else if (selector && typeof selector === 'object' && 'length' in selector) {
-                if (selector.length === 0) {
-                    elements = [];
-                } else if (selector[0] && isNode(selector[0])) {
-                    elements = selector;
-                } else {
-                    return nullChain;
-                }
-            }
-            else {
-                return nullChain;
-            }
-        } catch (error) {
-            if (isDev) console.warn('p$: Selector error:', error);
-            return nullChain;
+        if (selector === undefined || selector === null) {
+            return createNullChain();
         }
         
-        if (elements && elements.length) {
-            const validElements = [];
-            const seen = new WeakSet();
-            
-            toArray(elements).forEach(el => {
-                if (el && isNode(el) && !seen.has(el)) {
-                    seen.add(el);
-                    
-                    if (!document.contains(el)) {
-                        EventRegistry.clear(el);
-                    } else {
-                        validElements.push(el);
-                    }
-                }
-            });
-            
-            return validElements.length ? new Chain(validElements) : nullChain;
+        if (isString(selector) && selector.trim() === '') {
+            return createNullChain();
         }
         
-        return nullChain;
-    }
-
-    // ==================== GLOBAL EXPORT ====================
-    if (isBrowser) {
-        window.p$ = p$;
-        window.p$._version = '2.0.9';
+        if (isString(selector)) {
+            try {
+                const elements = document.querySelectorAll(selector);
+                return new Chain(elements);
+            } catch (error) {
+                if (isDev) console.warn('p$: Invalid selector:', selector, error);
+                return createNullChain();
+            }
+        }
+        
+        if (selector instanceof Chain) {
+            return selector;
+        }
+        
+        if (isNode(selector) || selector === window || selector === document) {
+            return new Chain([selector]);
+        }
+        
+        if (selector && typeof selector === 'object' && 'length' in selector) {
+            const isValid = Array.from(selector).every(item => 
+                isNode(item) || item === window || item === document || item instanceof Chain
+            );
+            
+            if (isValid) {
+                return new Chain(selector);
+            } else if (isDev) {
+                console.warn('p$: Invalid collection - contains non-DOM elements');
+            }
+        }
+        
+        if (selector && selector.jquery) {
+            try {
+                return new Chain(selector.toArray());
+            } catch (e) {
+                if (isDev) console.warn('p$: jQuery conversion failed:', e);
+            }
+        }
+        
+        return createNullChain();
     }
     
-    // ==================== STATIC METHODS ====================
     p$.create = function(tag, attributes = {}) {
-        if (!isBrowser) return nullChain;
+        if (!isBrowser) return createNullChain();
         
         const el = document.createElement(tag);
         
@@ -647,10 +683,7 @@
                 el.textContent = value;
             } else if (key.startsWith('on') && isFunction(value)) {
                 const eventName = key.slice(2);
-                const wrapped = (e) => value.call(el, e);
-                
-                EventRegistry.add(el, eventName, value, wrapped, {});
-                el.addEventListener(eventName, wrapped);
+                el.addEventListener(eventName, value);
             } else if (value !== null && value !== undefined) {
                 el.setAttribute(key, String(value));
             }
@@ -658,7 +691,7 @@
         
         return p$(el);
     };
-
+    
     p$.ready = function(callback) {
         if (!isBrowser || !isFunction(callback)) return;
         
@@ -669,49 +702,42 @@
         
         document.addEventListener('DOMContentLoaded', callback, { once: true });
     };
-
-    p$.hasPolos = () => isBrowser && !!window.Polos;
     
-    p$.invalidateSelectorCache = function(element) {
-        if (element) {
-            selectorCache.delete(element);
-        }
+    p$.cleanup = function(element) {
+        if (element) EventRegistry.clear(element);
     };
     
     p$.getEventHandlers = function(element, eventName) {
-        return EventRegistry.getHandlers(element, eventName);
+        if (!element || !element[EVENT_REGISTRY]) return [];
+        const registry = element[EVENT_REGISTRY];
+        if (!eventName) return Array.from(registry.handlers.keys());
+        return Array.from(registry.handlers.get(eventName)?.keys() || []);
     };
     
-    p$.cleanup = function(element) {
-        if (element) {
-            EventRegistry.clear(element);
-            selectorCache.delete(element);
+    p$.noConflict = function() {
+        if (global._p$legacy) {
+            global.p$ = global._p$legacy;
+            delete global._p$legacy;
         }
+        return p$;
     };
     
-    p$.teardown = function() {
-        if (domObserver) {
-            domObserver.disconnect();
-            domObserver = null;
+    if (isBrowser) {
+        if (global.p$ && global.p$._version) {
+            global._p$legacy = global.p$;
         }
         
-        REGISTERED_ELEMENTS.forEach(el => {
-            EventRegistry.clear(el);
-        });
+        global.p$ = p$;
+        global.p$._version = '2.1.0';
         
-        selectorCache = new WeakMap();
-    };
-    p$.generateSelector = function(element) {
-        return generateSafeSelector(element);
-    };
-    
-    if (isDev) {
-        p$._debug = {
-            registeredElements: REGISTERED_ELEMENTS,
-            eventRegistry: EventRegistry,
-            selectorCache: selectorCache
-        };
+        if (isDev) {
+            p$._debug = {
+                EventRegistry: EventRegistry,
+                isNullChain: (obj) => obj && obj.__isNullChain === true
+            };
+        }
     }
-
+    
     return p$;
-});
+    
+})(typeof window !== 'undefined' ? window : this);
