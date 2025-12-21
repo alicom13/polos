@@ -11,6 +11,12 @@
     const activeRequests=new Map();let counter=0;
     const genId=()=>`py_${Date.now()}_${++counter}_${Math.random().toString(36).slice(2,9)}`;
 
+    /**
+     * serializeQueryRec
+     * Rekursif mengubah object/array menjadi query string.
+     * Array of objects menggunakan indeks eksplisit.
+     * Date dikonversi ke ISO string.
+     */
     const serializeQueryRec=(key,value,parentKey)=>{
       const parts=[];const prefix=parentKey?`${parentKey}[${key}]`:key;
       if(value===null||value===undefined) return parts;
@@ -24,8 +30,16 @@
       return parts;
     };
 
+    /**
+     * serializeQuery
+     * Wrapper untuk serializeQueryRec, menerima object dan menghasilkan query string.
+     */
     const serializeQuery=params=>Object.entries(params).flatMap(([k,v])=>serializeQueryRec(k,v)).join('&');
-
+    /**
+     * buildUrl
+     * Membuat URL lengkap termasuk query string.
+     * Memastikan baseURL tersedia di Node.js untuk relative URL.
+     */
     const buildUrl=(url,params)=>{
       let u;
       try{
@@ -39,7 +53,12 @@
         return u.toString();
       }catch(e){throw new Error(`Invalid URL: ${url}. ${e.message}`);}
     };
-
+    /**
+     * appendFormRec
+     * Rekursif menambahkan data object/array ke FormData.
+     * Konsisten dengan serializeQueryRec, array of objects dengan indeks eksplisit.
+     * Date dikonversi ke ISO string.
+     */
     const appendFormRec=(form,data,parentKey)=>{
       if(!data) return;
       for(const [k,v] of Object.entries(data)){
@@ -55,7 +74,17 @@
         else form.append(key,v);
       }
     };
-
+    /**
+     * req
+     * Fungsi inti untuk semua request HTTP.
+     * Params:
+     *   method: GET, POST, PUT, PATCH, DELETE
+     *   url: endpoint
+     *   data: object, FormData, File, atau string
+     *   cfg: konfigurasi tambahan, termasuk headers, params, timeout, signal, responseType
+     * Return:
+     *   Object {data, status, statusText, headers, config, requestId}
+     */
     async function req(method,url,data,cfg={}){
       const id=genId();
       const controller=cfg.signal?null:new AbortController();
@@ -85,23 +114,38 @@
       }catch(e){if(timeoutId) clearTimeout(timeoutId);const err=new Error(e.name==='AbortError'?'Request cancelled or timeout':e.message);err.requestId=id;throw err;}
       finally{activeRequests.delete(id);}
     }
-
+    // HTTP method wrappers
     const get=(u,cfg)=>req('GET',u,null,cfg),
           post=(u,d,cfg)=>req('POST',u,d,cfg),
           put=(u,d,cfg)=>req('PUT',u,d,cfg),
           patch=(u,d,cfg)=>req('PATCH',u,d,cfg),
           remove=(u,cfg)=>req('DELETE',u,null,cfg);
-
+    /**
+     * upload
+     * Mengirim file tunggal dengan FormData.
+     * fieldName: nama key file di server, default 'file'
+     * data: object tambahan akan ditambahkan ke FormData
+     * multiUpload
+     * Mengirim banyak file sekaligus dengan FormData.
+     * fieldName: nama key array file, default 'files'
+     * data: object tambahan akan ditambahkan ke FormData
+     */
     const upload=(url,file,{fieldName='file',data,...cfg}={})=>{const form=new FormData();form.append(fieldName,file);appendFormRec(form,data);return req('POST',url,form,cfg);};
     const multiUpload=(url,files,{fieldName='files',data,...cfg}={})=>{if(!(files instanceof FileList||Array.isArray(files)))throw new Error('Files must be Array or FileList');const form=new FormData();Array.from(files).forEach((f,i)=>form.append(`${fieldName}[${i}]`,f));appendFormRec(form,data);return req('POST',url,form,cfg);};
 
+    /**
+     * cancel,cancelAll
+     * Membatalkan request berdasarkan requestId, dan Semua request
+     */
     const cancel=id=>{const r=activeRequests.get(id);if(r){r.controller?.abort();activeRequests.delete(id);return true}return false};
     const cancelAll=()=>{for(const id of activeRequests.keys()) cancel(id)};
+    /**
+     * create
+     * Membuat instance baru dengan konfigurasi berbeda
+     */
     const create=c=>Py({...defaults,...c,headers:{...defaults.headers,...(c?.headers||{})}});
-
     return {get,post,put,patch,delete:remove,upload,multiUpload,cancel,cancelAll,create,activeRequests};
   }
-
   global.Py=Py;
   global.py=Py();
 })(typeof window!=='undefined'?window:global);
