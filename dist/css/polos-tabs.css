@@ -1,8 +1,7 @@
 /* 
- * POLOS TABS v1.0 - Minimal Tab System
- * Release: 2025
- * License: MIT
- * GitHub: https://github.com/alicom13/polos
+ * POLOS TABS v1.0 - Dual Mode (Pure CSS + JS Enhanced)
+ * Mode 1: Pure CSS with :target (no JS required)
+ * Mode 2: JS Enhanced with active class (better UX)
  */
 
 /* ============ BASE VARIABLES ============ */
@@ -35,7 +34,10 @@
 }
 
 .polos-tabs__btn {
+    /* Reset button styles */
     all: unset;
+    
+    /* Basic structure */
     display: block;
     cursor: pointer;
     text-decoration: none;
@@ -43,19 +45,70 @@
     font-size: inherit;
     white-space: nowrap;
     text-align: center;
+    
+    /* Minimal spacing */
     padding: var(--polos-tab-btn-py) var(--polos-tab-btn-px);
+    
+    /* Border structure only */
     border: var(--polos-tab-border-width) solid transparent;
     border-radius: var(--polos-tab-radius) var(--polos-tab-radius) 0 0;
+    
+    /* Interaction */
     transition: border-color var(--polos-tab-transition);
+    
+    /* Allow custom styling */
     background: transparent;
     color: inherit;
 }
 
-/* Active state */
+/* ============ DUAL MODE SUPPORT ============ */
+
+/* MODE 1: PURE CSS (using :target) - Default fallback */
+.polos-tabs__panel {
+    display: none;
+    padding: var(--polos-tab-panel-p);
+}
+
+/* Default: show first panel */
+.polos-tabs__area > .polos-tabs__panel:first-of-type {
+    display: block;
+}
+
+/* When panel is targeted via URL hash */
+.polos-tabs__panel:target {
+    display: block !important;
+}
+
+/* Hide other panels when one is targeted */
+.polos-tabs__panel:target ~ .polos-tabs__panel {
+    display: none;
+}
+
+/* Style for active tab in pure CSS mode (tricky but possible) */
+.polos-tabs__btn[href]:target,
+.polos-tabs__area:has(.polos-tabs__panel:target) 
+    ~ .polos-tabs__nav .polos-tabs__btn[href]:not(:target) {
+    /* This will style the active tab in pure CSS mode */
+    border-bottom-color: transparent;
+    position: relative;
+    z-index: 1;
+}
+
+/* MODE 2: JS ENHANCED (using .active class) - Better UX */
+/* When JS is loaded, it will add .active classes */
 .polos-tabs__btn.active {
     border-bottom-color: transparent;
     position: relative;
     z-index: 1;
+}
+
+.polos-tabs__panel.active {
+    display: block;
+}
+
+/* JS mode overrides pure CSS mode */
+.polos-tabs__panel.active ~ .polos-tabs__panel:target {
+    display: none !important;
 }
 
 /* ============ CONTENT AREA ============ */
@@ -66,29 +119,23 @@
     margin-top: -1px;
 }
 
-.polos-tabs__panel {
-    display: none;
-    padding: var(--polos-tab-panel-p);
-}
-
-.polos-tabs__panel.active {
-    display: block;
-}
-
 /* ============ LAYOUT VARIANTS ============ */
+/* Cards variant */
 .polos-tabs--cards .polos-tabs__area {
     border-radius: var(--polos-tab-radius);
     margin-top: 0.5rem;
 }
 
 .polos-tabs--cards .polos-tabs__btn {
-    border-radius: var(--polos-tab-radius);
+    border-radius: var(--polos-tabs__radius);
 }
 
-.polos-tabs--cards .polos-tabs__btn.active {
+.polos-tabs--cards .polos-tabs__btn.active,
+.polos-tabs--cards .polos-tabs__btn[href]:target {
     border-bottom-color: inherit;
 }
 
+/* Clean variant */
 .polos-tabs--clean .polos-tabs__area {
     border: none;
     border-radius: 0;
@@ -100,6 +147,7 @@
     border-radius: 0;
 }
 
+/* Vertical tabs */
 .polos-tabs--vertical {
     display: flex;
 }
@@ -150,6 +198,7 @@
 }
 
 /* ============ UTILITY CLASSES ============ */
+/* Size utilities */
 .polos-tabs--sm {
     --polos-tab-btn-px: 0.75rem;
     --polos-tab-btn-py: 0.375rem;
@@ -162,10 +211,12 @@
     --polos-tab-panel-p: 1.5rem;
 }
 
+/* Border utilities */
 .polos-tabs--border { --polos-tab-border-width: 1px; }
 .polos-tabs--border-2 { --polos-tab-border-width: 2px; }
 .polos-tabs--borderless { --polos-tab-border-width: 0; }
 
+/* Radius utilities */
 .polos-tabs--rounded { --polos-tab-radius: 0.375rem; }
 .polos-tabs--rounded-lg { --polos-tab-radius: 0.5rem; }
 .polos-tabs--rounded-none { --polos-tab-radius: 0; }
