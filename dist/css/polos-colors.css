@@ -155,3 +155,9 @@
 .text-abuabu {
     color: #6b7280;
 }
+
+/* 10. BLACK & WHITE */
+.bg-s-black, .bg-s-hitam { background-color: #000000; }
+.bg-s-white, .bg-s-putih { background-color: #ffffff; }
+.text-black, .text-hitam { color: #000000; }
+.text-white, .text-putih { color: #ffffff; }
