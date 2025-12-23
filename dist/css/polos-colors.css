@@ -1,0 +1,184 @@
+/* ============================================
+   9 HYBRID COLORS - BILINGUAL
+   English / Indonesian Meaning / Indonesian Color Name
+   ============================================ */
+
+/* 1. PRIMARY / UTAMA / BIRU */
+
+.bg-g-primary,
+.bg-g-utama,
+.bg-g-biru {
+    background: linear-gradient(135deg, #0d6efd, #0b5ed7);
+}
+
+.bg-s-primary,
+.bg-s-utama,
+.bg-s-biru {
+    background-color: #0d6efd;
+}
+
+.text-primary,
+.text-utama,
+.text-biru {
+    color: #0d6efd;
+}
+
+/* 2. SUCCESS / SUKSES / HIJAU */
+
+.bg-g-success,
+.bg-g-sukses,
+.bg-g-hijau {
+    background: linear-gradient(135deg, #198754, #157347);
+}
+
+.bg-s-success,
+.bg-s-sukses,
+.bg-s-hijau {
+    background-color: #198754;
+}
+
+.text-success,
+.text-sukses,
+.text-hijau {
+    color: #198754;
+}
+
+/* 3. DANGER / BAHAYA / MERAH */
+
+.bg-g-danger,
+.bg-g-bahaya,
+.bg-g-merah {
+    background: linear-gradient(135deg, #f43f5e, #e11d48);
+}
+
+.bg-s-danger,
+.bg-s-bahaya,
+.bg-s-merah {
+    background-color: #f43f5e;
+}
+
+.text-danger,
+.text-bahaya,
+.text-merah {
+    color: #f43f5e;
+}
+
+/* 4. WARNING / PERINGATAN / KUNING */
+
+.bg-g-warning,
+.bg-g-peringatan,
+.bg-g-kuning {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+}
+
+.bg-s-warning,
+.bg-s-peringatan,
+.bg-s-kuning {
+    background-color: #f59e0b;
+}
+
+.text-warning,
+.text-peringatan,
+.text-kuning {
+    color: #f59e0b;
+}
+
+/* 5. INFO / INFO / BIRU MUDA */
+
+.bg-g-info,
+.bg-g-info,
+.bg-g-birumuda {
+    background: linear-gradient(135deg, #0dcaf0, #0baccc);
+}
+
+.bg-s-info,
+.bg-s-info,
+.bg-s-birumuda {
+    background-color: #0dcaf0;
+}
+
+.text-info,
+.text-info,
+.text-birumuda {
+    color: #0dcaf0;
+}
+
+/* 6. EMERALD / ZAMRUD / HIJAU MUDA */
+
+.bg-g-emerald,
+.bg-g-zamrud,
+.bg-g-hijaumuda {
+    background: linear-gradient(135deg, #10b981, #059669);
+}
+
+.bg-s-emerald,
+.bg-s-zamrud,
+.bg-s-hijaumuda {
+    background-color: #10b981;
+}
+
+.text-emerald,
+.text-zamrud,
+.text-hijaumuda {
+    color: #10b981;
+}
+
+/* 7. OCEAN / LAUT / BIRU TUA */
+
+.bg-g-ocean,
+.bg-g-laut,
+.bg-g-birutua {
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+}
+
+.bg-s-ocean,
+.bg-s-laut,
+.bg-s-birutua {
+    background-color: #3b82f6;
+}
+
+.text-ocean,
+.text-laut,
+.text-birutua {
+    color: #3b82f6;
+}
+
+/* 8. ROYAL / UNGU / UNGU */
+
+.bg-g-royal,
+.bg-g-ungu,
+.bg-g-ungu {
+    background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+}
+
+.bg-s-royal,
+.bg-s-ungu,
+.bg-s-ungu {
+    background-color: #8b5cf6;
+}
+
+.text-royal,
+.text-ungu,
+.text-ungu {
+    color: #8b5cf6;
+}
+
+/* 9. STEEL / ABU / ABU-ABU */
+
+.bg-g-steel,
+.bg-g-abu,
+.bg-g-abuabu {
+    background: linear-gradient(135deg, #6b7280, #4b5563);
+}
+
+.bg-s-steel,
+.bg-s-abu,
+.bg-s-abuabu {
+    background-color: #6b7280;
+}
+
+.text-steel,
+.text-abu,
+.text-abuabu {
+    color: #6b7280;
+}
