@@ -1,5 +1,5 @@
 /*!
- * Polos JS v1.6.1 - Production Version
+ * Polos JS v1.6.4 - Production Version
  * Core: Responsive Grid, Screen Detection, Event System, Popup
  * Compatible with Polos CSS Framework
  * @copyright 2025 Polos Style - MIT License
