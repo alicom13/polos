@@ -12,6 +12,7 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   line-height: 1.45;
   color: #333;
+  font-size: 0.9375rem; /* 15px mobile default */
 }
 
 /* ===== COMPLETE RESPONSIVE HEADINGS ===== */
@@ -54,6 +55,7 @@ h6 { font-size: 0.9rem; font-weight: 600; line-height: 1.5; }
 
 /* Responsive text sizes - Tablet (576px-767.98px) */
 @media (min-width: 576px) and (max-width: 767.98px) {
+  body { font-size: 1rem; }
   .text-lg { font-size: 1.125rem; }
   .text-xl { font-size: 1.25rem; }
   .text-2xl { font-size: 1.5rem; }
@@ -61,6 +63,11 @@ h6 { font-size: 0.9rem; font-weight: 600; line-height: 1.5; }
 
 /* Responsive text sizes - Desktop (≥768px) */
 @media (min-width: 768px) {
+    body { 
+    font-size: 1.0625rem; /* 17px - lebih eksplisit */
+    line-height: 1.5; /* Optional: lebih longgar di desktop */
+  }
+  .lh-normal { line-height: 1.5; } /* Match jika desktop line-height beda */
   .text-lg { font-size: 1.25rem; }
   .text-xl { font-size: 1.5rem; }
   .text-2xl { font-size: 1.875rem; }
@@ -106,7 +113,7 @@ h6 { font-size: 0.9rem; font-weight: 600; line-height: 1.5; }
 
 /* ===== LINE HEIGHT UTILITIES ===== */
 .lh-tight { line-height: 1.25; }
-.lh-normal { line-height: 1.6; }
+.lh-normal { line-height: inherit; }
 .lh-loose { line-height: 2; }
 
 /* ===== LETTER SPACING ===== */
@@ -158,15 +165,11 @@ a {
 
 a:hover {
   color: #002a8a;
-  text-decoration: none;
+  text-decoration: underline;
 }
 
 /* ===== MOBILE OPTIMIZATIONS (≤575.98px) ===== */
 @media (max-width: 575.98px) {
-  body {
-    font-size: 0.9375rem; /* 15px */
-    line-height: 1.4;
-  }
   .text-lg { font-size: 1.125rem; }
   .text-xl { font-size: 1.25rem; }
 }
