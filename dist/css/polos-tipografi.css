@@ -1,46 +1,46 @@
 /*!
- * Polos Tipografi v1.0 - Minimal Typography System
+ * Polos Tipografi v1.1 - Minimal Typography System
  * Essentials only: headings, text sizes, weights, transforms, decorations
  * Breakpoints: Small (≤575.98px), Medium (576px-767.98px), Large (≥768px)
  * Compatible with Polos Core CSS
+ * Scale: 1.6 → 1.4 → 1.2 → 1.1 → 1.0 → 0.9
  * Licensed under Unlicense - Free for any use
  * https://waliweb.com/
  */
-
-/* ===== RESET & BASE ===== */
-* {
-  box-sizing: border-box;
-}
-
 /* ===== BASE TYPOGRAPHY ===== */
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  line-height: 1.6;
+  line-height: 1.45;
   color: #333;
 }
 
-/* ===== RESPONSIVE HEADINGS ===== */
-/* Small/Mobile (≤575.98px) - DEFAULT */
-h1 { font-size: 1.75rem; font-weight: 700; line-height: 1.2; }
-h2 { font-size: 1.5rem; font-weight: 600; line-height: 1.3; }
-h3 { font-size: 1.25rem; font-weight: 600; line-height: 1.4; }
-h4 { font-size: 1.125rem; font-weight: 600; line-height: 1.4; }
+/* ===== COMPLETE RESPONSIVE HEADINGS ===== */
+/* Small/Mobile (≤575.98px) - Base 15px */
+h1 { font-size: 1.6rem; font-weight: 700; line-height: 1.2; }
+h2 { font-size: 1.4rem; font-weight: 600; line-height: 1.3; }
+h3 { font-size: 1.2rem; font-weight: 600; line-height: 1.4; }
+h4 { font-size: 1.1rem; font-weight: 600; line-height: 1.4; }
 h5 { font-size: 1rem; font-weight: 600; line-height: 1.5; }
-h6 { font-size: 0.875rem; font-weight: 600; line-height: 1.5; }
+h6 { font-size: 0.9rem; font-weight: 600; line-height: 1.5; }
 
-/* Medium/Tablet (576px - 767.98px) */
+/* Medium/Tablet (576px - 767.98px) - Base 16px */
 @media (min-width: 576px) and (max-width: 767.98px) {
-  h1 { font-size: 2rem; }
-  h2 { font-size: 1.75rem; }
-  h3 { font-size: 1.5rem; }
-  h4 { font-size: 1.25rem; }
+  h1 { font-size: 1.8rem; }   /* 28.8px ≈ 29px */
+  h2 { font-size: 1.6rem; }   /* 25.6px ≈ 26px */
+  h3 { font-size: 1.4rem; }   /* 22.4px ≈ 22px */
+  h4 { font-size: 1.2rem; }   /* 19.2px ≈ 19px */
+  h5 { font-size: 1.1rem; }   /* 17.6px ≈ 18px */
+  h6 { font-size: 1rem; }     /* 16px */
 }
 
-/* Large/Desktop (≥768px) */
+/* Large/Desktop (≥768px) - Base 17px */
 @media (min-width: 768px) {
-  h1 { font-size: 2.25rem; }
-  h2 { font-size: 2rem; }
-  h3 { font-size: 1.625rem; }
+  h1 { font-size: 2rem; }     /* 34px */
+  h2 { font-size: 1.8rem; }   /* 30.6px ≈ 31px */
+  h3 { font-size: 1.6rem; }   /* 27.2px ≈ 27px */
+  h4 { font-size: 1.4rem; }   /* 23.8px ≈ 24px */
+  h5 { font-size: 1.2rem; }   /* 20.4px ≈ 20px */
+  h6 { font-size: 1.1rem; }   /* 18.7px ≈ 19px */
 }
 
 /* ===== TEXT SIZE UTILITIES ===== */
@@ -158,16 +158,15 @@ a {
 
 a:hover {
   color: #002a8a;
-  text-decoration: underline;
+  text-decoration: none;
 }
 
 /* ===== MOBILE OPTIMIZATIONS (≤575.98px) ===== */
 @media (max-width: 575.98px) {
   body {
     font-size: 0.9375rem; /* 15px */
-    line-height: 1.5;
+    line-height: 1.4;
   }
-  
   .text-lg { font-size: 1.125rem; }
   .text-xl { font-size: 1.25rem; }
 }
