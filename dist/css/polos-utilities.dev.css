@@ -1,0 +1,101 @@
+/* ============================================
+   UTILITY BOX MODERN SKIN
+   Skin modern untuk pl-box dengan glass & accent
+   ============================================ */
+
+/* 1. MODERN BOX SKIN */
+.pl-box.box {
+    border: 2px solid rgba(255, 255, 255, 0.3) !important;
+    border-radius: 12px;
+    color: white;
+    height: 100%;
+    transition: all 0.3s ease;
+    overflow: hidden;
+    position: relative;
+}
+
+.pl-box.box .bx-itm {
+    padding: 2rem 1.5rem !important;
+    text-align: center;
+    position: relative;
+    z-index: 2;
+}
+
+/* 2. INTERNAL ELEMENTS */
+.box-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    display: inline-block;
+    transition: transform 0.3s ease;
+}
+
+.box-title {
+    font-weight: bold;
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+    line-height: 1.3;
+}
+
+.box-subtitle {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.875rem;
+    display: inline-block;
+    margin-top: 0.5rem;
+}
+
+/* 3. SHORT DESCRIPTION */
+.box-desc {
+    font-size: 0.875rem;
+    line-height: 1.5;
+    margin: 0.5rem 0 1rem;
+    opacity: 0.9;
+}
+
+/* Auto text color */
+.pl-box.box[class*="bg-g-"] .box-desc,
+.pl-box.box[class*="bg-s-"]:not(.bg-s-putih):not(.bg-s-white) .box-desc {
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.pl-box.box.bg-s-putih .box-desc,
+.pl-box.box.bg-s-white .box-desc,
+.pl-box.box:not([class*="bg-"]) .box-desc {
+    color: #4b5563;
+}
+
+/* 4. HOVER EFFECTS */
+.pl-box.box:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2) !important;
+}
+
+.pl-box.box:hover .box-icon {
+    transform: scale(1.1);
+}
+
+/* 5. GLASS EFFECT */
+.pl-box.box-glass {
+    background: rgba(255, 255, 255, 0.1) !important;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+}
+
+/* 6. ACCENT BORDER */
+.pl-box.box-accent {
+    border-left-width: 6px !important;
+    border-left-color: rgba(255, 255, 255, 0.5) !important;
+}
+
+/* 7. NO BACKGROUND FALLBACK */
+.pl-box.box:not([class*="bg-"]) {
+    background: #f8f9fa;
+    border-color: #dee2e6 !important;
+    color: #212529;
+}
+
+.pl-box.box:not([class*="bg-"]) .box-subtitle {
+    background: rgba(0, 0, 0, 0.1);
+    color: #495057;
+}
