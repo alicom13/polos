@@ -1,5 +1,5 @@
 /*!
- * Polos Popup v1.0.0
+ * Polos Popup v1.0.1
  * Core: Ultimate Popup 3 in 1 (Modal, Alert, Toast)
  * Deskription : 
  * @copyright 2025 Polos Style - MIT License
@@ -87,7 +87,24 @@ const Modal={
         closeBtn.addEventListener('click',()=>Modal.close(id));
         pop.appendChild(closeBtn);
 
-        const bd=document.createElement('div');bd.className='pop-bd';bd.textContent=opts.content;pop.appendChild(bd);
+        //const bd=document.createElement('div');bd.className='pop-bd';bd.textContent=opts.content;pop.appendChild(bd);
+        const bd=document.createElement('div');
+        bd.className='pop-bd';
+        
+        // === PERBAIKAN DI SINI ===
+        if (opts.content instanceof HTMLElement) {
+            // Jika content adalah elemen DOM
+            bd.appendChild(opts.content.cloneNode(true));
+        } else if (typeof opts.content === 'string') {
+            // Jika content adalah string HTML
+            bd.innerHTML = opts.content;
+        } else {
+            // Fallback untuk teks biasa
+            bd.textContent = opts.content;
+        }
+        // === END PERBAIKAN ===
+        
+        pop.appendChild(bd);
 
         if(opts.buttons.length>0){
             const ft=document.createElement('div');ft.className='pop-ft';
