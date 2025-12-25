@@ -1,145 +1,147 @@
-/**
- * PdTables v1.0.0 - Virtual Table Ringan
- * by @pd
- * MIT License
+/*!
+ * PdTables v1.0.0 - Virtual Table Ringan + CRUD + Checkbox
+ * (c) 2025 - Single File Solution
+ * License: MIT
  */
 
 class PdTables {
     constructor(table, data, options = {}) {
-        // Validation
-        if (!table) throw new Error('PdTables: Element table diperlukan');
         this.table = typeof table === 'string' ? document.querySelector(table) : table;
-        if (!this.table) throw new Error('PdTables: Table tidak ditemukan');
+        this.dataAsli = Array.isArray(data) ? data : [];
+        this.dataTersaring = [...this.dataAsli];
         
-        // Configuration
         this.config = {
             tinggi: 400,
             lebarBaris: 42,
             barisTampil: 25,
-            ukuranHalaman: 50,
             virtualScroll: true,
-            bisaSortir: true,
             bisaCari: true,
             bisaPilih: false,
-            bergaris: true,
-            hover: true,
-            headerTetap: true,
-            placeholderCari: 'Cari...',
-            teksKosong: 'Tidak ada data',
-            teksMemuat: 'Memuat...',
             ...options
         };
         
-        // Data
-        this.dataAsli = Array.isArray(data) ? data : [];
-        this.dataTersaring = [...this.dataAsli];
-        this.dataTampil = [];
-        
-        // State
         this.state = {
             halaman: 0,
-            totalHalaman: 0,
             scrollAtas: 0,
-            kolomSortir: null,
-            arahSortir: 'naik',
             teksCari: '',
-            barisTerpilih: new Set()
+            terpilih: new Set()
         };
         
-        // DOM
-        this.dom = {
-            pembungkus: null,
-            pencarian: null,
-            badan: null,
-            spacer: null,
-            footer: null,
-            info: null,
-            pagination: null
-        };
-        
+        this.dom = {};
         this.init();
     }
     
     init() {
+        this.buatCSS();
         this.buatPembungkus();
         this.buatKontrol();
         this.buatBadan();
-        this.buatFooter();
         this.pasangEvent();
         this.render();
     }
     
-    buatPembungkus() {
-        // Hapus wrapper lama jika ada
-        if (this.table.parentNode.classList.contains('pd-wrapper')) {
-            this.table.parentNode.remove();
+    buatCSS() {
+        if (!document.querySelector('#pd-tables-css')) {
+            const style = document.createElement('style');
+            style.id = 'pd-tables-css';
+            style.textContent = `
+                .pd-wrapper { border:1px solid #e2e8f0; border-radius:6px; background:white; font-family:sans-serif; }
+                .pd-kontrol { padding:12px; background:#f7fafc; border-bottom:1px solid #e2e8f0; display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+                .pd-cari { flex:1; min-width:200px; padding:8px 12px; border:1px solid #cbd5e0; border-radius:4px; }
+                .pd-btn { padding:8px 16px; border:none; border-radius:4px; cursor:pointer; font-size:14px; }
+                .pd-btn-tambah { background:#4299e1; color:white; }
+                .pd-btn-copy { background:#48bb78; color:white; }
+                .pd-counter { background:#718096; color:white; padding:2px 8px; border-radius:10px; font-size:12px; display:none; margin-left:auto; }
+                .pd-table { width:100%; border-collapse:collapse; }
+                .pd-table th { background:#edf2f7; padding:12px; text-align:left; font-weight:600; }
+                .pd-table td { padding:12px; border-bottom:1px solid #e2e8f0; }
+                .pd-table input[type="checkbox"] { cursor:pointer; }
+                .pd-btn-aksi { padding:4px 8px; font-size:12px; margin:2px; border-radius:3px; border:none; cursor:pointer; }
+                .pd-btn-edit { background:#fbbf24; color:#000; }
+                .pd-btn-hapus { background:#f56565; color:white; }
+                .pd-modal { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); display:flex; align-items:center; justify-content:center; z-index:1000; }
+                .pd-modal-content { background:white; padding:20px; border-radius:8px; min-width:300px; max-width:500px; }
+                .pd-input { width:100%; padding:8px; margin:8px 0; border:1px solid #cbd5e0; border-radius:4px; }
+                .pd-toast { position:fixed; bottom:20px; right:20px; background:#2d3748; color:white; padding:12px 24px; border-radius:6px; animation:pdFadeOut 3s; }
+                @keyframes pdFadeOut { 0%,70% { opacity:1; } 100% { opacity:0; } }
+                .pd-bergaris tr:nth-child(even) { background:#fafafa; }
+                .pd-hover tr:hover { background:#ebf8ff; }
+            `;
+            document.head.appendChild(style);
         }
-        
-        this.dom.pembungkus = document.createElement('div');
-        this.dom.pembungkus.className = 'pd-wrapper';
-        this.dom.pembungkus.style.height = `${this.config.tinggi}px`;
-        
-        // Sisipkan wrapper
-        this.table.parentNode.insertBefore(this.dom.pembungkus, this.table);
-        this.dom.pembungkus.appendChild(this.table);
-        
-        // Tambah class ke table
+    }
+    
+    buatPembungkus() {
+        this.dom.wrapper = document.createElement('div');
+        this.dom.wrapper.className = 'pd-wrapper';
+        this.dom.wrapper.style.height = `${this.config.tinggi}px`;
+        this.table.parentNode.insertBefore(this.dom.wrapper, this.table);
+        this.dom.wrapper.appendChild(this.table);
         this.table.classList.add('pd-table');
         if (this.config.bergaris) this.table.classList.add('pd-bergaris');
         if (this.config.hover) this.table.classList.add('pd-hover');
-        if (this.config.headerTetap) this.table.classList.add('pd-header-tetap');
     }
     
     buatKontrol() {
-        // Kontainer kontrol
         const kontrol = document.createElement('div');
         kontrol.className = 'pd-kontrol';
         
-        // Input pencarian
+        // Pencarian
         if (this.config.bisaCari) {
             this.dom.pencarian = document.createElement('input');
             this.dom.pencarian.type = 'text';
             this.dom.pencarian.className = 'pd-cari';
-            this.dom.pencarian.placeholder = this.config.placeholderCari;
-            this.dom.pencarian.autocomplete = 'off';
+            this.dom.pencarian.placeholder = 'Cari...';
             kontrol.appendChild(this.dom.pencarian);
         }
         
-        this.dom.pembungkus.insertBefore(kontrol, this.table);
+        // Tombol Tambah
+        const btnTambah = document.createElement('button');
+        btnTambah.className = 'pd-btn pd-btn-tambah';
+        btnTambah.textContent = '+ Tambah Data';
+        btnTambah.onclick = () => this.tambahForm();
+        kontrol.appendChild(btnTambah);
+        
+        // Tombol Copy Terpilih
+        const btnCopy = document.createElement('button');
+        btnCopy.className = 'pd-btn pd-btn-copy';
+        btnCopy.textContent = '📋 Copy Terpilih';
+        btnCopy.onclick = () => this.copyTerpilih();
+        kontrol.appendChild(btnCopy);
+        
+        // Counter
+        this.dom.counter = document.createElement('span');
+        this.dom.counter.className = 'pd-counter';
+        kontrol.appendChild(this.dom.counter);
+        
+        this.dom.wrapper.insertBefore(kontrol, this.table);
     }
     
     buatBadan() {
-        // Pastikan tbody ada
-        if (!this.table.tBodies.length) {
-            this.table.createTBody();
-        }
+        if (!this.table.tBodies.length) this.table.createTBody();
+        this.dom.tbody = this.table.tBodies[0];
         
-        this.dom.badan = this.table.tBodies[0];
+        // Header checkbox jika bisa pilih
+        if (this.config.bisaPilih && this.table.tHead) {
+            const header = this.table.tHead.rows[0];
+            const th = document.createElement('th');
+            th.style.width = '50px';
+            th.innerHTML = '<input type="checkbox" id="pd-select-all" title="Pilih semua di halaman ini">';
+            header.insertBefore(th, header.firstChild);
+        }
         
         // Spacer untuk virtual scroll
         if (this.config.virtualScroll) {
             this.dom.spacer = document.createElement('div');
             this.dom.spacer.className = 'pd-spacer';
-            this.dom.pembungkus.appendChild(this.dom.spacer);
+            this.dom.wrapper.appendChild(this.dom.spacer);
         }
     }
     
-    buatFooter() {
-        this.dom.footer = document.createElement('div');
-        this.dom.footer.className = 'pd-footer';
-        
-        // Info
-        this.dom.info = document.createElement('div');
-        this.dom.info.className = 'pd-info';
-        this.dom.footer.appendChild(this.dom.info);
-        
-        this.dom.pembungkus.appendChild(this.dom.footer);
-    }
-    
     pasangEvent() {
-        // Scroll virtual
+        // Virtual scroll
         if (this.config.virtualScroll) {
-            this.dom.pembungkus.addEventListener('scroll', (e) => {
+            this.dom.wrapper.addEventListener('scroll', (e) => {
                 this.state.scrollAtas = e.target.scrollTop;
                 this.render();
             });
@@ -149,355 +151,303 @@ class PdTables {
         if (this.config.bisaCari && this.dom.pencarian) {
             this.dom.pencarian.addEventListener('input', (e) => {
                 this.state.teksCari = e.target.value.toLowerCase();
-                this.state.halaman = 0;
                 this.render();
             });
         }
         
-        // Sortir header
-        if (this.config.bisaSortir && this.table.tHead) {
-            const headers = this.table.tHead.rows[0].cells;
-            Array.from(headers).forEach((th, index) => {
-                th.classList.add('pd-bisa-sortir');
-                th.style.cursor = 'pointer';
-                th.addEventListener('click', () => this.sortirKolom(index));
-            });
-        }
+        // Event delegation untuk checkbox
+        this.dom.wrapper.addEventListener('change', (e) => {
+            if (e.target.id === 'pd-select-all') {
+                this.selectAllPage(e.target.checked);
+            }
+            if (e.target.classList.contains('pd-row-check')) {
+                const id = e.target.dataset.id;
+                e.target.checked ? this.state.terpilih.add(id) : this.state.terpilih.delete(id);
+                this.updateUI();
+            }
+        });
     }
     
     render() {
-        // Update data tersaring
-        this.updateDataTersaring();
+        // Filter data
+        this.filterData();
         
-        // Hitung pagination jika perlu
-        this.hitungPagination();
+        // Hitung range virtual
+        const start = this.config.virtualScroll ? 
+            Math.floor(this.state.scrollAtas / this.config.lebarBaris) : 0;
+        const end = start + this.config.barisTampil;
         
         // Ambil data untuk ditampilkan
-        this.ambilDataTampil();
+        this.dataTampil = this.dataTersaring.slice(start, end);
         
-        // Kosongkan badan tabel
-        this.dom.badan.innerHTML = '';
+        // Render table
+        this.renderTable(start);
         
-        // Render baris
-        this.renderBaris();
-        
-        // Update info
-        this.updateInfo();
-        
-        // Update posisi scroll virtual
-        if (this.config.virtualScroll) {
-            this.updateSpacer();
-            this.dom.badan.style.transform = `translateY(${this.awalIndex() * this.config.lebarBaris}px)`;
-        }
+        // Update UI
+        this.updateUI();
     }
     
-    updateDataTersaring() {
-        if (!this.state.teksCari) {
+    filterData() {
+        if (this.state.teksCari) {
+            this.dataTersaring = this.dataAsli.filter(row => 
+                row.some(cell => String(cell).toLowerCase().includes(this.state.teksCari))
+            );
+        } else {
             this.dataTersaring = [...this.dataAsli];
-        } else {
-            this.dataTersaring = this.dataAsli.filter(baris => {
-                return baris.some(sel => 
-                    String(sel).toLowerCase().includes(this.state.teksCari)
-                );
+        }
+    }
+    
+    renderTable(startIndex) {
+        this.dom.tbody.innerHTML = '';
+        
+        this.dataTampil.forEach((row, idxRelatif) => {
+            const idxAbsolut = startIndex + idxRelatif;
+            const tr = document.createElement('tr');
+            
+            // Checkbox jika bisa pilih
+            if (this.config.bisaPilih) {
+                const id = row[0] || idxAbsolut;
+                const td = document.createElement('td');
+                td.innerHTML = `
+                    <input type="checkbox" class="pd-row-check" 
+                           data-id="${id}"
+                           ${this.state.terpilih.has(id) ? 'checked' : ''}>
+                `;
+                tr.appendChild(td);
+            }
+            
+            // Data cells
+            row.forEach((cell, colIdx) => {
+                const td = document.createElement('td');
+                if (colIdx === 1 && this.state.teksCari) {
+                    // Highlight hasil pencarian
+                    td.innerHTML = this.highlight(cell, this.state.teksCari);
+                } else {
+                    td.textContent = cell;
+                }
+                tr.appendChild(td);
             });
-        }
-        
-        // Apply sortir jika ada
-        if (this.state.kolomSortir !== null) {
-            this.sortirData();
-        }
-    }
-    
-    sortirData() {
-        const kolom = this.state.kolomSortir;
-        const arah = this.state.arahSortir === 'naik' ? 1 : -1;
-        
-        this.dataTersaring.sort((a, b) => {
-            const valA = a[kolom];
-            const valB = b[kolom];
             
-            // Coba numeric
-            const numA = Number(valA);
-            const numB = Number(valB);
+            // Action buttons
+            const tdAksi = document.createElement('td');
+            tdAksi.innerHTML = `
+                <button class="pd-btn-aksi pd-btn-edit" onclick="pdTablesInstance.edit(${idxAbsolut})">Edit</button>
+                <button class="pd-btn-aksi pd-btn-hapus" onclick="pdTablesInstance.hapus(${idxAbsolut})">Hapus</button>
+            `;
+            tr.appendChild(tdAksi);
             
-            if (!isNaN(numA) && !isNaN(numB)) {
-                return arah * (numA - numB);
-            }
-            
-            // String compare
-            const strA = String(valA || '').toLowerCase();
-            const strB = String(valB || '').toLowerCase();
-            return arah * strA.localeCompare(strB);
-        });
-    }
-    
-    sortirKolom(index) {
-        if (this.state.kolomSortir === index) {
-            this.state.arahSortir = this.state.arahSortir === 'naik' ? 'turun' : 'naik';
-        } else {
-            this.state.kolomSortir = index;
-            this.state.arahSortir = 'naik';
-        }
-        
-        // Update indikator sortir
-        this.updateIndikatorSortir();
-        
-        // Sortir dan render
-        this.sortirData();
-        this.render();
-    }
-    
-    updateIndikatorSortir() {
-        if (!this.table.tHead) return;
-        
-        const headers = this.table.tHead.rows[0].cells;
-        
-        // Hapus semua indikator
-        Array.from(headers).forEach(th => {
-            th.classList.remove('pd-sortir-naik', 'pd-sortir-turun');
+            this.dom.tbody.appendChild(tr);
         });
         
-        // Tambah indikator ke kolom aktif
-        if (this.state.kolomSortir !== null) {
-            const th = headers[this.state.kolomSortir];
-            th.classList.add(`pd-sortir-${this.state.arahSortir}`);
-        }
-    }
-    
-    ambilDataTampil() {
-        const awal = this.awalIndex();
-        const akhir = this.akhirIndex();
-        this.dataTampil = this.dataTersaring.slice(awal, akhir);
-    }
-    
-    awalIndex() {
+        // Update virtual scroll spacer
         if (this.config.virtualScroll) {
-            return Math.floor(this.state.scrollAtas / this.config.lebarBaris);
+            this.dom.spacer.style.height = `${this.dataTersaring.length * this.config.lebarBaris}px`;
+            this.dom.tbody.style.transform = `translateY(${startIndex * this.config.lebarBaris}px)`;
         }
-        return this.state.halaman * this.config.ukuranHalaman;
     }
     
-    akhirIndex() {
-        const awal = this.awalIndex();
-        
-        if (this.config.virtualScroll) {
-            return awal + this.config.barisTampil + 5; // Buffer
-        }
-        
-        return Math.min(awal + this.config.ukuranHalaman, this.dataTersaring.length);
+    highlight(text, query) {
+        if (!query || !text) return text;
+        const regex = new RegExp(`(${query})`, 'gi');
+        return String(text).replace(regex, '<mark style="background:#fefcbf">$1</mark>');
     }
     
-    renderBaris() {
-        const fragment = document.createDocumentFragment();
-        
-        this.dataTampil.forEach((barisData, indexRelatif) => {
-            const indexAbsolut = this.awalIndex() + indexRelatif;
-            const tr = this.buatBaris(barisData, indexAbsolut);
-            fragment.appendChild(tr);
+    // ===== CHECKBOX SYSTEM =====
+    selectAllPage(checked) {
+        const ids = this.dataTampil.map(row => row[0] || this.dataTersaring.indexOf(row));
+        ids.forEach(id => {
+            checked ? this.state.terpilih.add(id) : this.state.terpilih.delete(id);
         });
-        
-        this.dom.badan.appendChild(fragment);
+        this.updateUI();
     }
     
-    buatBaris(barisData, index) {
-        const tr = document.createElement('tr');
-        tr.dataset.index = index;
+    updateUI() {
+        // Update counter
+        const count = this.state.terpilih.size;
+        this.dom.counter.textContent = count ? `${count} data terpilih` : '';
+        this.dom.counter.style.display = count ? 'inline-block' : 'none';
         
-        // Warna bergaris
-        if (this.config.bergaris && index % 2 === 0) {
-            tr.classList.add('pd-genap');
+        // Update select-all checkbox
+        const selectAll = document.getElementById('pd-select-all');
+        if (selectAll) {
+            const ids = this.dataTampil.map(row => row[0] || this.dataTersaring.indexOf(row));
+            selectAll.checked = ids.every(id => this.state.terpilih.has(id));
+            selectAll.indeterminate = ids.some(id => this.state.terpilih.has(id)) && 
+                                      !ids.every(id => this.state.terpilih.has(id));
         }
-        
-        // Buat sel
-        barisData.forEach((isiSel, indexSel) => {
-            const td = document.createElement('td');
-            
-            // Highlight pencarian
-            if (this.state.teksCari) {
-                td.innerHTML = this.highlightTeks(isiSel, this.state.teksCari);
-            } else {
-                td.textContent = isiSel;
-            }
-            
-            tr.appendChild(td);
+    }
+    
+    getDataTerpilih() {
+        return this.dataAsli.filter(row => {
+            const id = row[0] || this.dataAsli.indexOf(row);
+            return this.state.terpilih.has(id);
         });
-        
-        return tr;
     }
     
-    highlightTeks(teks, query) {
-        if (!query || !teks) return teks;
-        const regex = new RegExp(`(${this.escapeRegex(query)})`, 'gi');
-        return String(teks).replace(regex, '<mark class="pd-highlight">$1</mark>');
-    }
-    
-    escapeRegex(string) {
-        return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    }
-    
-    hitungPagination() {
-        this.state.totalHalaman = Math.ceil(this.dataTersaring.length / this.config.ukuranHalaman);
-        
-        if (this.state.halaman >= this.state.totalHalaman) {
-            this.state.halaman = Math.max(0, this.state.totalHalaman - 1);
-        }
-    }
-    
-    updateInfo() {
-        if (!this.dom.info) return;
-        
-        const total = this.dataTersaring.length;
-        const awal = this.awalIndex() + 1;
-        const akhir = Math.min(this.akhirIndex(), total);
-        
-        if (total === 0) {
-            this.dom.info.textContent = this.config.teksKosong;
-        } else {
-            this.dom.info.textContent = 
-                `Menampilkan ${awal}-${akhir} dari ${total} data`;
-            
-            if (this.state.teksCari && this.dataTersaring.length !== this.dataAsli.length) {
-                this.dom.info.textContent += ` (disaring dari ${this.dataAsli.length})`;
-            }
-        }
-    }
-    
-    updateSpacer() {
-        if (!this.dom.spacer) return;
-        const tinggiTotal = this.dataTersaring.length * this.config.lebarBaris;
-        this.dom.spacer.style.height = `${tinggiTotal}px`;
-    }
-    
-    // ============ PUBLIC API ============
-    
-    updateData(dataBaru) {
-        if (!Array.isArray(dataBaru)) {
-            console.error('PdTables: Data harus array');
+    copyTerpilih() {
+        const data = this.getDataTerpilih();
+        if (data.length === 0) {
+            this.toast('⚠️ Pilih data dulu!');
             return;
         }
         
-        this.dataAsli = dataBaru;
-        this.dataTersaring = [...dataBaru];
-        this.state.halaman = 0;
-        this.state.teksCari = '';
-        this.state.barisTerpilih.clear();
-        
-        if (this.dom.pencarian) {
-            this.dom.pencarian.value = '';
+        const text = data.map(row => row.join('\t')).join('\n');
+        navigator.clipboard.writeText(text)
+            .then(() => this.toast(`✅ ${data.length} data dicopy`))
+            .catch(() => this.toast('❌ Gagal copy'));
+    }
+    
+    // ===== CRUD =====
+    tambahForm() {
+        this.modal(`
+            <h3>Tambah Data Baru</h3>
+            <input type="text" id="pd-input-baru" class="pd-input" placeholder="Masukkan data...">
+            <div style="margin-top:15px; text-align:right;">
+                <button class="pd-btn" onclick="pdTablesInstance.simpanBaru()">Simpan</button>
+            </div>
+        `, 'pd-modal-tambah');
+    }
+    
+    simpanBaru() {
+        const input = document.getElementById('pd-input-baru');
+        if (input.value.trim()) {
+            const newData = [
+                Date.now(),
+                input.value.trim(),
+                new Date().toLocaleDateString('id-ID')
+            ];
+            this.dataAsli.push(newData);
+            this.render();
+            this.toast('✅ Data ditambahkan');
+            this.closeModal('pd-modal-tambah');
         }
+    }
+    
+    edit(index) {
+        if (this.dataAsli[index]) {
+            const data = this.dataAsli[index];
+            this.modal(`
+                <h3>Edit Data</h3>
+                <input type="text" id="pd-input-edit" class="pd-input" value="${data[1] || ''}">
+                <div style="margin-top:15px; text-align:right;">
+                    <button class="pd-btn" onclick="pdTablesInstance.simpanEdit(${index})">Update</button>
+                </div>
+            `, 'pd-modal-edit');
+        }
+    }
+    
+    simpanEdit(index) {
+        const input = document.getElementById('pd-input-edit');
+        if (input.value.trim() && this.dataAsli[index]) {
+            this.dataAsli[index][1] = input.value.trim();
+            this.render();
+            this.toast('✅ Data diupdate');
+            this.closeModal('pd-modal-edit');
+        }
+    }
+    
+    hapus(index) {
+        if (confirm('Yakin hapus data ini?')) {
+            this.dataAsli.splice(index, 1);
+            this.render();
+            this.toast('✅ Data dihapus');
+        }
+    }
+    
+    // ===== UTILITIES =====
+    modal(content, id = 'pd-modal') {
+        this.closeModal(id);
         
+        const modal = document.createElement('div');
+        modal.className = 'pd-modal';
+        modal.id = id;
+        modal.innerHTML = `
+            <div class="pd-modal-content">
+                ${content}
+                <button onclick="this.closest('.pd-modal').remove()" 
+                        style="position:absolute; top:10px; right:10px; background:none; border:none; font-size:20px; cursor:pointer;">
+                    ×
+                </button>
+            </div>
+        `;
+        document.body.appendChild(modal);
+    }
+    
+    closeModal(id) {
+        const existing = document.getElementById(id);
+        if (existing) existing.remove();
+    }
+    
+    toast(message) {
+        const toast = document.createElement('div');
+        toast.className = 'pd-toast';
+        toast.textContent = message;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+    }
+    
+    // ===== PUBLIC API =====
+    updateData(newData) {
+        this.dataAsli = Array.isArray(newData) ? newData : [];
         this.render();
     }
     
-    tambahBaris(barisData) {
-        if (!Array.isArray(barisData)) {
-            console.error('PdTables: Baris harus array');
+    tambahData(item) {
+        if (Array.isArray(item)) {
+            this.dataAsli.push(item);
+            this.render();
+        }
+    }
+    
+    exportCSV(filename = 'data.csv') {
+        const data = this.dataTersaring;
+        if (data.length === 0) {
+            this.toast('⚠️ Tidak ada data');
             return;
         }
         
-        this.dataAsli.push(barisData);
-        this.dataTersaring.push(barisData);
-        this.render();
-    }
-    
-    hapusBaris(index) {
-        if (index < 0 || index >= this.dataAsli.length) {
-            console.error('PdTables: Index tidak valid');
-            return;
-        }
-        
-        this.dataAsli.splice(index, 1);
-        this.dataTersaring = [...this.dataAsli];
-        this.state.barisTerpilih.delete(index);
-        this.render();
-    }
-    
-    keHalaman(halaman) {
-        if (halaman < 0 || halaman >= this.state.totalHalaman) return;
-        
-        this.state.halaman = halaman;
-        
-        if (this.dom.pembungkus) {
-            this.dom.pembungkus.scrollTop = 0;
-            this.state.scrollAtas = 0;
-        }
-        
-        this.render();
-    }
-    
-    eksporCSV(namaFile = 'data.csv') {
-        if (this.dataTersaring.length === 0) return;
-        
-        let csv = '';
-        
-        // Header
-        if (this.table.tHead) {
-            const headers = Array.from(this.table.tHead.rows[0].cells)
-                .map(th => `"${th.textContent}"`)
-                .join(',');
-            csv += headers + '\n';
-        }
-        
-        // Data
-        this.dataTersaring.forEach(baris => {
-            const barisCSV = baris.map(sel => 
-                `"${String(sel).replace(/"/g, '""')}"`
-            ).join(',');
-            csv += barisCSV + '\n';
+        let csv = 'ID,Nama,Tanggal\n';
+        data.forEach(row => {
+            csv += row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(',') + '\n';
         });
         
-        // Download
         const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
         const link = document.createElement('a');
-        const url = URL.createObjectURL(blob);
-        
-        link.href = url;
-        link.download = namaFile;
-        link.style.visibility = 'hidden';
-        
-        document.body.appendChild(link);
+        link.href = URL.createObjectURL(blob);
+        link.download = filename;
         link.click();
-        document.body.removeChild(link);
     }
     
-    refresh() {
-        this.render();
+    clearSelection() {
+        this.state.terpilih.clear();
+        this.updateUI();
     }
     
     destroy() {
-        if (this.dom.pembungkus && this.dom.pembungkus.parentNode) {
-            this.dom.pembungkus.parentNode.insertBefore(this.table, this.dom.pembungkus);
-            this.dom.pembungkus.parentNode.removeChild(this.dom.pembungkus);
+        if (this.dom.wrapper && this.dom.wrapper.parentNode) {
+            this.dom.wrapper.parentNode.insertBefore(this.table, this.dom.wrapper);
+            this.dom.wrapper.parentNode.removeChild(this.dom.wrapper);
         }
-        
-        this.table.classList.remove('pd-table', 'pd-bergaris', 'pd-hover', 'pd-header-tetap');
-    }
-    
-    getStats() {
-        return {
-            totalBaris: this.dataAsli.length,
-            barisTersaring: this.dataTersaring.length,
-            barisTampil: this.dataTampil.length,
-            halaman: this.state.halaman,
-            totalHalaman: this.state.totalHalaman,
-            kolomSortir: this.state.kolomSortir,
-            arahSortir: this.state.arahSortir
-        };
+        this.table.classList.remove('pd-table', 'pd-bergaris', 'pd-hover');
     }
 }
 
-// Auto-initialize
+// Auto-initialize dan export global
 if (typeof window !== 'undefined') {
     window.PdTables = PdTables;
     
-    // Auto-init dengan atribut data
+    // Auto-init untuk table dengan data-pdt
     window.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('table[data-pdt]').forEach(table => {
             const dataSrc = table.dataset.src;
             if (dataSrc) {
                 try {
                     const data = JSON.parse(dataSrc);
-                    new PdTables(table, data);
+                    window.pdTablesInstance = new PdTables(table, data, {
+                        bisaPilih: table.dataset.selectable === 'true',
+                        bisaCari: true,
+                        virtualScroll: true
+                    });
                 } catch (e) {
                     console.error('PdTables: Gagal parse data', e);
                 }
