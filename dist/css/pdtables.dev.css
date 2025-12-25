@@ -1,0 +1,122 @@
+/* PdTables v1.0.0 - CSS Ringan */
+
+/* Wrapper utama */
+.pd-wrapper {
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    background: white;
+    overflow: hidden;
+    font-family: system-ui, -apple-system, sans-serif;
+}
+
+/* Kontrol */
+.pd-kontrol {
+    padding: 12px;
+    background: #f7fafc;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.pd-cari {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #cbd5e0;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.pd-cari:focus {
+    outline: none;
+    border-color: #4299e1;
+    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+}
+
+/* Table */
+.pd-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+.pd-table th {
+    background: #edf2f7;
+    padding: 12px;
+    text-align: left;
+    font-weight: 600;
+    color: #2d3748;
+    border-bottom: 2px solid #cbd5e0;
+    position: relative;
+}
+
+.pd-header-tetap th {
+    position: sticky;
+    top: 0;
+    background: #edf2f7;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.pd-table td {
+    padding: 12px;
+    border-bottom: 1px solid #e2e8f0;
+    color: #4a5568;
+}
+
+/* Striped rows */
+.pd-bergaris tbody tr:nth-child(even) {
+    background-color: #fafafa;
+}
+
+.pd-bergaris .pd-genap {
+    background-color: #f7fafc;
+}
+
+/* Hover */
+.pd-hover tbody tr:hover {
+    background-color: #ebf8ff;
+}
+
+/* Sortable headers */
+.pd-bisa-sortir:hover {
+    background: #e2e8f0 !important;
+}
+
+.pd-bisa-sortir::after {
+    content: '↕';
+    position: absolute;
+    right: 8px;
+    opacity: 0.5;
+    font-size: 12px;
+}
+
+.pd-sortir-naik::after {
+    content: '↑';
+    color: #4299e1;
+    opacity: 1;
+}
+
+.pd-sortir-turun::after {
+    content: '↓';
+    color: #4299e1;
+    opacity: 1;
+}
+
+/* Highlight pencarian */
+.pd-highlight {
+    background-color: #fefcbf;
+    padding: 1px 2px;
+    border-radius: 2px;
+    font-weight: 600;
+}
+
+/* Footer */
+.pd-footer {
+    padding: 12px;
+    background: #f7fafc;
+    border-top: 1px solid #e2e8f0;
+    font-size: 14px;
+    color: #718096;
+}
+
+/* Spacer untuk virtual scroll */
+.pd-spacer {
+    pointer-events: none;
+}
