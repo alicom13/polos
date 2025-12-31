@@ -5,646 +5,849 @@
  * @copyright 2025 Polos Style - MIT License
  * @link : https://github.com/alicom13/polos
  */
-class Polos {
-    constructor() {
-        this.version = "1.6.5";
-        this.breakpoints = {
-            small: "(max-width: 575.98px)",
-            medium: "(min-width: 576px) and (max-width: 767.98px)",
-            large: "(min-width: 768px)"
-        };
-        this.classes = {
-            loading: "lmn-loading",
-            interactive: "js-inpolos",
-            responsive: {
-                show: { small: "d-sm", medium: "d-md", large: "d-lg" },
-                hide: { small: "h-sm", medium: "h-md", large: "h-lg" }
-            },
-            popup: {
-                wrapper: "popup",
-                container: "pop",
-                header: "pop-hd",
-                title: "pop-title",
-                body: "pop-bd",
-                footer: "pop-ft",
-                closeButton: "pop-close",
-                button: "btn",
-                sizePrefix: "pop-",
-                type: { 
-                    toast: "popup-toast", // Legacy, for old toast type
-                    alert: "pop-alert"
-                }
-            },
-            // NEW: Toast Classes
-            toast: {
-                container: "polos-toast-container",
-                wrapper: "toast",
-                content: "pt-content",
-                closeButton: "pt-close",
-                progressBar: "pt-progress-bar",
-                progress: "pt-progress",
-                types: {
-                    success: "pt-success",
-                    error: "pt-error",
-                    info: "pt-info",
-                    warning: "pt-warning"
-                }
-            }
-        };
-        this.defaults = {
-            animationDuration: 300,
-            closeOnBackdrop: true,
-            toastDuration: 5000
-        };
-        
-        this.currentScreenSize = "";
-        this.observers = [];
-        this.activePopups = new Set();
-        this.staticPopups = new Set();
-        this.activeToasts = new Map(); // NEW: Track active toasts
-        this.timeouts = new Map();
-        this._resizeTimeout = null;
-        this._isInitialized = false;
-
-        this.init();
-    }
-
-    // ==================== SCREEN DETECTION ====================
-    detectScreenSize() {
-        const prev = this.currentScreenSize;
-        let newSize = "";
-        
-        if (window.matchMedia(this.breakpoints.large).matches) {
-            newSize = "large";
-        } else if (window.matchMedia(this.breakpoints.medium).matches) {
-            newSize = "medium";
-        } else if (window.matchMedia(this.breakpoints.small).matches) {
-            newSize = "small";
-        }
-        
-        if (prev !== newSize) {
-            this.currentScreenSize = newSize;
-            this.triggerEvent("screenChange", {
-                from: prev,
-                to: newSize,
-                columns: this.getCurrentColumns()
-            });
-        }
-    }
-
-    getCurrentColumns() {
-        return this.currentScreenSize === "large" ? 12 :
-               this.currentScreenSize === "medium" ? 8 : 4;
-    }
-
-    getScreenSize() { 
-        return this.currentScreenSize; 
-    }
-
-    refresh() { 
-        this.detectScreenSize(); 
-    }
-
-    // ==================== GRID MANAGEMENT (ENHANCED) ====================
-    manageGrid(gridSelector, gridConfig) {
-        const grid = document.querySelector(gridSelector);
-        if (!grid) return;
-
-        const gridItems = grid.querySelectorAll('[class*="cl-"], [class*="cm-"], [class*="cs-"]');
-        gridItems.forEach(el => {
-            el.classList.forEach(cls => { 
-                if (/^(cl|cm|cs)-\d+$/.test(cls)) el.classList.remove(cls); 
-            });
-        });
-
-        const gridChildren = Array.from(grid.children)
-            .filter(child => child.nodeType === Node.ELEMENT_NODE);
-        
-        let processedCount = 0;
-        
-        gridConfig.forEach((item, idx) => {
-            if (!item) return;
-            
-            let el = null;
-            for (let i = processedCount; i < gridChildren.length; i++) {
-                const child = gridChildren[i];
-                if (!child.hasAttribute('data-polos-grid-processed')) {
-                    el = child;
-                    child.setAttribute('data-polos-grid-processed', 'true');
-                    processedCount = i + 1;
-                    break;
-                }
-            }
-            
-            if (!el) return;
-
-            if (item.large >= 1 && item.large <= 12) el.classList.add("cl-" + item.large);
-            if (item.medium >= 1 && item.medium <= 8) el.classList.add("cm-" + item.medium);
-            if (item.small >= 1 && item.small <= 4) el.classList.add("cs-" + item.small);
-        });
-        
-        grid.querySelectorAll('[data-polos-grid-processed]').forEach(el => {
-            el.removeAttribute('data-polos-grid-processed');
-        });
-    }
-
-    // ==================== DOM UTILITIES (ENHANCED) ====================
-    show(selector) {
-        document.querySelectorAll(selector).forEach(el => {
-            if (el.hasAttribute("data-polos-original-display")) {
-                const originalDisplay = el.getAttribute("data-polos-original-display");
-                el.style.display = originalDisplay;
-                if (el.getAttribute('data-polos-hidden-by') === 'polos') {
-                    el.removeAttribute("data-polos-original-display");
-                    el.removeAttribute('data-polos-hidden-by');
-                }
-            } else {
-                el.style.display = '';
-            }
-        });
-    }
-
-    hide(selector) {
-        document.querySelectorAll(selector).forEach(el => {
-            if (!el.hasAttribute("data-polos-original-display")) {
-                const computedStyle = window.getComputedStyle(el);
-                el.setAttribute("data-polos-original-display", computedStyle.display);
-                el.setAttribute('data-polos-hidden-by', 'polos');
-            }
-            el.style.display = "none";
-        });
-    }
-
-    showOn(selector, breakpoint) {
-        const size = { small: "small", medium: "medium", large: "large" }[breakpoint];
-        if (!size) return;
-        
-        const showClass = this.classes.responsive.show[size];
-        const hideClass = this.classes.responsive.hide[size];
-        
-        document.querySelectorAll(selector).forEach(el => { 
-            el.classList.add(showClass); 
-            el.classList.remove(hideClass); 
-        });
-    }
-
-    hideOn(selector, breakpoint) {
-        const size = { small: "small", medium: "medium", large: "large" }[breakpoint];
-        if (!size) return;
-        
-        const showClass = this.classes.responsive.show[size];
-        const hideClass = this.classes.responsive.hide[size];
-        
-        document.querySelectorAll(selector).forEach(el => { 
-            el.classList.add(hideClass); 
-            el.classList.remove(showClass); 
-        });
-    }
-
-    setLoading(selector, isLoading, text = "") {
-        document.querySelectorAll(selector).forEach(el => {
-            if (isLoading) { 
-                el.classList.add(this.classes.loading); 
-                if (text) el.setAttribute("data-polos-loading-text", text); 
-            } else { 
-                el.classList.remove(this.classes.loading); 
-                if (el.hasAttribute("data-polos-loading-text")) {
-                    el.removeAttribute("data-polos-loading-text");
-                } 
-            }
-        });
-    }
-
-    enhance(selector) {
-        document.querySelectorAll(selector).forEach(el => { 
-            el.classList.add(this.classes.interactive); 
-        });
-    }
-
-    // ==================== EVENT SYSTEM ====================
-    on(observer, id = null) {
-        if (typeof observer !== "function") return null;
-        
-        const observerId = id || "obs-" + Date.now() + "-" + Math.random().toString(36).slice(2, 11);
-        this.observers.push({ 
-            id: observerId, 
-            fn: observer, 
-            timestamp: Date.now() 
-        });
-        
-        return observerId;
-    }
-
-    off(identifier) {
-        let index = -1;
-        
-        if (typeof identifier === "function") {
-            index = this.observers.findIndex(o => o.fn === identifier);
-        } else if (typeof identifier === "string") {
-            index = this.observers.findIndex(o => o.id === identifier);
-        }
-        
-        if (index > -1) { 
-            this.observers.splice(index, 1);
-            return true; 
-        }
-        
-        return false;
-    }
-
-    triggerEvent(eventName, data) {
-        this.observers.forEach(observer => {
-            if (typeof observer.fn === "function") {
-                try { 
-                    observer.fn(eventName, data); 
-                } catch (e) { 
-                    console.error(`Polos: Error in observer ${observer.id}`, e); 
-                }
-            }
-        });
-    }
-
-    // ==================== POPUP SYSTEM (ENHANCED) ====================
-    _generatePopupId(prefix = "popup-") {
-        return prefix + Date.now() + "-" + Math.random().toString(36).slice(2, 11);
-    }
-
-    _getFocusableElements(container) {
-        const focusableSelectors = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
-        return Array.from(container.querySelectorAll(focusableSelectors)).filter(el => {
-            return !el.hasAttribute('disabled') && 
-                   !el.getAttribute('aria-hidden') && 
-                   el.offsetParent !== null;
-        });
-    }
-
-    _trapFocus(popupEl) {
-        const focusableElements = this._getFocusableElements(popupEl);
-        if (focusableElements.length === 0) return;
-
-        const firstFocusableEl = focusableElements[0];
-        const lastFocusableEl = focusableElements[focusableElements.length - 1];
-
-        const handleFocusTrap = (e) => {
-            if (e.key === 'Tab') {
-                if (e.shiftKey) { // Shift + Tab
-                    if (document.activeElement === firstFocusableEl) {
-                        lastFocusableEl.focus();
-                        e.preventDefault();
-                    }
-                } else { // Tab
-                    if (document.activeElement === lastFocusableEl) {
-                        firstFocusableEl.focus();
-                        e.preventDefault();
-                    }
-                }
-            }
-        };
-
-        popupEl.addEventListener('keydown', handleFocusTrap);
-        popupEl._focusTrapListener = handleFocusTrap;
-    }
-
-    popup(options = {}) {
-        const opts = {
-            title: "", content: "", size: "md", type: "default", alertType: "info",
-            buttons: [{ text: "OK", class: "pop-submit", action: "close" }],
-            backdrop: true, keyboard: true, focus: true, triggerElement: null,
-            onBeforeShow: null, onShown: null, onBeforeHide: null, onHidden: null,
-            ...options
-        };
-        
-        const popupId = this._generatePopupId();
-        const c = this.classes.popup;
-        let html = "";
-        const popupSize = (opts.type === 'alert' || opts.type === 'confirm') ? (opts.size || "sm") : opts.size;
-        const ariaLabelledBy = opts.title ? `id="popup-title-${popupId}"` : '';
-
-        if (opts.type === "toast") { // Legacy support, redirects to new toast system
-            return this.toast({ message: opts.content, type: opts.alertType, title: opts.title, timer: this.defaults.toastDuration });
-        }
-
-        const closeBtn = (opts.title || opts.type !== 'alert') ? 
-            `<button class="${c.closeButton}" data-polos="close" aria-label="Close">&times;</button>` : "";
-        const header = opts.title ? 
-            `<div class="${c.header}"><h3 class="${c.title}" ${ariaLabelledBy}>${opts.title}</h3>${closeBtn}</div>` : "";
-        let bodyContent = opts.content;
-        if (opts.type === "alert" || opts.type === "confirm") {
-            bodyContent = `<div class="${c.type.alert} ${opts.alertType}">${opts.content}</div>`;
-        }
-        const buttonsHtml = opts.buttons.map(btn => 
-            `<button class="${btn.class}" data-polos="${btn.action || 'close'}">${btn.text}</button>`
-        ).join("");
-        const footer = (opts.buttons.length > 0 || opts.type === 'confirm') ? 
-            `<div class="${c.footer}">${buttonsHtml}</div>` : "";
-        
-        html = `<div class="${c.wrapper}" id="${popupId}" role="dialog" aria-modal="true" ${ariaLabelledBy} aria-hidden="true">
-                  <div class="${c.container} ${c.sizePrefix}${popupSize}">${header}<div class="${c.body}">${bodyContent}</div>${footer}</div>
-                </div>`;
-
-        document.body.insertAdjacentHTML("beforeend", html);
-        const popupEl = document.getElementById(popupId);
-        popupEl._popupOptions = opts;
-        popupEl._triggerElement = opts.triggerElement;
-        
-        if (opts.backdrop === true) {
-            popupEl.addEventListener('click', (e) => { if (e.target === popupEl) this.closePopup(popupId); });
-        }
-
-        if (opts.onBeforeShow) opts.onBeforeShow(popupEl);
-        this.triggerEvent("popup:beforeShow", { popupId, relatedTarget: opts.triggerElement });
-        this.openPopup(popupId);
-        return popupId;
-    }
-
-    openPopup(popupId) {
-        const popup = document.getElementById(popupId);
-        if (!popup || popup.classList.contains("active")) return;
-        const opts = popup._popupOptions;
-        this.activePopups.add(popupId);
-        popup.classList.add("active");
-        popup.setAttribute('aria-hidden', 'false');
-        document.body.style.overflow = "hidden";
-
-        if (opts.focus) {
-            const focusableElements = this._getFocusableElements(popup);
-            if (focusableElements.length > 0) focusableElements[0].focus();
-            else { popup.querySelector('.pop')?.setAttribute('tabindex', '-1'); popup.querySelector('.pop')?.focus(); }
-        }
-        this._trapFocus(popup);
-
-        setTimeout(() => {
-            if (opts.onShown) opts.onShown(popup);
-            this.triggerEvent("popup:shown", { popupId, relatedTarget: popup._triggerElement });
-        }, this.defaults.animationDuration);
-    }
-
-    closePopup(popupId) {
-        const popup = document.getElementById(popupId);
-        if (!popup || !popup.classList.contains("active")) return;
-        const opts = popup._popupOptions;
-        if (opts.onBeforeHide) opts.onBeforeHide(popup);
-        this.triggerEvent("popup:beforeHide", { popupId });
-
-        popup.classList.remove("active");
-        popup.setAttribute('aria-hidden', 'true');
-        this.activePopups.delete(popupId);
-        if (popup._focusTrapListener) popup.removeEventListener('keydown', popup._focusTrapListener);
-        if (opts.focus && popup._triggerElement && typeof popup._triggerElement.focus === 'function') {
-            popup._triggerElement.focus();
-        }
-
-        setTimeout(() => {
-            if (!this.staticPopups.has(popupId) && popup.parentNode) popup.parentNode.removeChild(popup);
-            if (this.activePopups.size === 0) document.body.style.overflow = "";
-            if (opts.onHidden) opts.onHidden();
-            this.triggerEvent("popup:hidden", { popupId, relatedTarget: popup._triggerElement });
-        }, this.defaults.animationDuration);
-    }
-
-    closeAllPopups() { 
-        Array.from(this.activePopups).forEach(popupId => this.closePopup(popupId)); 
-    }
+(function(global) {
+    'use strict';
     
-    updatePopup(popupId, options = {}) {
-        const popup = document.getElementById(popupId);
-        if (!popup) return false;
-        const opts = { ...popup._popupOptions, ...options };
-        popup._popupOptions = opts;
-        if (options.title !== undefined) {
-            const titleEl = popup.querySelector(`.${this.classes.popup.title}`);
-            if (titleEl) titleEl.textContent = opts.title;
-        }
-        if (options.content !== undefined) {
-            const bodyEl = popup.querySelector(`.${this.classes.popup.body}`);
-            if (bodyEl) {
-                if (opts.type === "alert" || opts.type === "confirm") {
-                    bodyEl.innerHTML = `<div class="${this.classes.popup.type.alert} ${opts.alertType}">${opts.content}</div>`;
-                } else {
-                    bodyEl.innerHTML = opts.content;
+    class Polos {
+        constructor() {
+            this.version = "1.6.5";
+            
+            this.breakpoints = {
+                small: "(max-width: 575.98px)",
+                medium: "(min-width: 576px) and (max-width: 767.98px)",
+                large: "(min-width: 768px)"
+            };
+            
+            this.classes = {
+                loading: "polos-loading",
+                interactive: "js-inpolos",
+                responsive: {
+                    show: { 
+                        small: "d-sm",
+                        medium: "d-md",
+                        large: "d-lg"
+                    },
+                    hide: { 
+                        small: "h-sm",
+                        medium: "h-md",
+                        large: "h-lg"
+                    }
+                },
+                grid: {
+                    small: "cs-",
+                    medium: "cm-", 
+                    large: "cl-"
+                },
+                modal: {
+                    wrapper: "popup",
+                    container: "pop",
+                    header: "pop-hd",
+                    title: "pop-title",
+                    body: "pop-bd",
+                    footer: "pop-ft",
+                    closeButton: "pop-close",
+                    sizePrefix: "pop-"
                 }
+            };
+            
+            this.defaults = {
+                animationDuration: 300,
+                closeOnBackdrop: true,
+                toastDuration: 5000,
+                toastRemoveAnimation: 'toastOut 0.3s forwards',
+                modalRemoveDelay: 100
+            };
+            
+            this.currentScreen = "";
+            this.activeModals = new Set();
+            this.activeToasts = new Set();
+            this.timeouts = new Map();
+            this._eventListeners = new Map();
+            this._toastData = new Map();
+            this._modalObservers = new Map();
+            this._responsiveElements = new Map();
+            this._modalButtonListeners = new Map();
+            this._resizeTimeout = null;
+            this._isInitialized = false;
+
+            this._boundMethods = new Map();
+            
+            this._bindMethods([
+                'init', 'showModal', 'hideModal', 'toggleModal', 'closeAllModals',
+                'toast', 'success', 'error', 'info', 'warning', '_removeToast', '_removeAllToasts',
+                'alert', 'confirm', 'modal', 'popup', 'openPopup', 'closePopup', 'closeAllPopups',
+                'show', 'hide', 'showOn', 'hideOn', 'setLoading', 'enhance',
+                'manageGrid', 'detectScreen', 'getCurrentColumns', 'getScreenSize', 'refresh',
+                'debug', 'destroy'
+            ]);
+            
+            this.init();
+        }
+
+        _bindMethods(methodNames) {
+            methodNames.forEach(method => {
+                if (typeof this[method] === 'function') {
+                    this._boundMethods.set(method, this[method].bind(this));
+                    this[method] = this._boundMethods.get(method);
+                }
+            });
+        }
+
+        _addEventListener(element, event, handler, options = {}) {
+            if (!this._eventListeners.has(event)) {
+                this._eventListeners.set(event, []);
+            }
+            this._eventListeners.get(event).push({ element, handler, options });
+            element.addEventListener(event, handler, options);
+        }
+
+        _removeAllEventListeners() {
+            this._eventListeners.forEach((listeners, event) => {
+                listeners.forEach(({ element, handler, options }) => {
+                    element.removeEventListener(event, handler, options);
+                });
+            });
+            this._eventListeners.clear();
+        }
+
+        init() {
+            if (this._isInitialized) {
+                console.warn('Polos: Already initialized');
+                return false;
+            }
+            
+            this.detectScreen();
+            this._setupEventListeners();
+            this._setupResizeHandler();
+            
+            this._isInitialized = true;
+            console.log(`Polos JS v${this.version} ready`);
+            
+            return true;
+        }
+
+        _setupEventListeners() {
+            this._addEventListener(document, "click", (e) => {
+                const target = e.target;
+                
+                const modalToggle = target.closest('[data-polos-toggle="modal"]');
+                if (modalToggle) {
+                    e.preventDefault();
+                    const modalId = modalToggle.dataset.polosTarget?.replace('#', '');
+                    if (modalId) this.toggleModal(modalId);
+                    return;
+                }
+                
+                const modalDismiss = target.closest('[data-polos-dismiss="modal"]');
+                if (modalDismiss) {
+                    e.preventDefault();
+                    const modal = modalDismiss.closest('.popup');
+                    if (modal) this.hideModal(modal.id);
+                    return;
+                }
+                
+                const toastDismiss = target.closest('[data-polos-dismiss="toast"]');
+                if (toastDismiss) {
+                    e.preventDefault();
+                    const toast = toastDismiss.closest('.toast');
+                    if (toast) this._removeToast(toast.id);
+                    return;
+                }
+                
+                if (target.classList.contains('popup')) {
+                    const modalId = target.id;
+                    const modal = document.getElementById(modalId);
+                    
+                    if (modal && modal.dataset.polosBackdrop !== 'static' && !target.closest('.pop')) {
+                        e.preventDefault();
+                        this.hideModal(modalId);
+                    }
+                }
+            });
+
+            const handleKeydown = (e) => {
+                if (e.key === "Escape" && this.activeModals.size > 0) {
+                    const modals = Array.from(this.activeModals);
+                    const topModalId = modals[modals.length - 1];
+                    const modal = document.getElementById(topModalId);
+                    
+                    if (modal && modal.dataset.polosBackdrop !== 'static') {
+                        this.hideModal(topModalId);
+                    }
+                }
+            };
+            this._addEventListener(document, "keydown", handleKeydown);
+        }
+
+        _setupResizeHandler() {
+            const handleResize = () => {
+                if (this._resizeTimeout) clearTimeout(this._resizeTimeout);
+                this._resizeTimeout = setTimeout(() => {
+                    const prevScreen = this.currentScreen;
+                    this.detectScreen();
+                    
+                    if (prevScreen !== this.currentScreen) {
+                        this._updateResponsiveElements();
+                    }
+                }, 100);
+            };
+            this._addEventListener(window, "resize", handleResize);
+        }
+
+        _addResponsiveElement(selector, breakpoint, action) {
+            const cssBreakpoint = this._jsToCssBreakpoint(breakpoint);
+            if (!cssBreakpoint) return;
+            
+            if (!this._responsiveElements.has(selector)) {
+                this._responsiveElements.set(selector, []);
+            }
+            this._responsiveElements.get(selector).push({ breakpoint: cssBreakpoint, action });
+            
+            this._applyResponsiveClass(selector, cssBreakpoint, action);
+        }
+
+        _updateResponsiveElements() {
+            this._responsiveElements.forEach((rules, selector) => {
+                rules.forEach(({ breakpoint, action }) => {
+                    this._applyResponsiveClass(selector, breakpoint, action);
+                });
+            });
+        }
+
+        _applyResponsiveClass(selector, breakpoint, action) {
+            const elements = document.querySelectorAll(selector);
+            if (elements.length === 0) return;
+            
+            const showClass = this.classes.responsive.show[breakpoint];
+            const hideClass = this.classes.responsive.hide[breakpoint];
+            
+            if (!showClass || !hideClass) return;
+            
+            elements.forEach(el => {
+                if (action === 'show') {
+                    if (this.currentScreen === breakpoint) {
+                        el.classList.add(showClass);
+                        el.classList.remove(hideClass);
+                    } else {
+                        el.classList.add(hideClass);
+                        el.classList.remove(showClass);
+                    }
+                } else if (action === 'hide') {
+                    if (this.currentScreen === breakpoint) {
+                        el.classList.add(hideClass);
+                        el.classList.remove(showClass);
+                    } else {
+                        el.classList.add(showClass);
+                        el.classList.remove(hideClass);
+                    }
+                }
+            });
+        }
+
+        _jsToCssBreakpoint(breakpoint) {
+            const mapping = {
+                'xs': 'small',
+                'sm': 'medium', 
+                'md': 'large',
+                'small': 'small',
+                'medium': 'medium',
+                'large': 'large'
+            };
+            return mapping[breakpoint] || null;
+        }
+
+        detectScreen() {
+            const prev = this.currentScreen;
+            let newSize = "";
+            
+            if (window.matchMedia(this.breakpoints.large).matches) {
+                newSize = "large";
+            } else if (window.matchMedia(this.breakpoints.medium).matches) {
+                newSize = "medium";
+            } else if (window.matchMedia(this.breakpoints.small).matches) {
+                newSize = "small";
+            }
+            
+            if (prev !== newSize) {
+                this.currentScreen = newSize;
             }
         }
-        return true;
-    }
 
-    alert(message, type = "info", title = "", size = "sm") {
-        const content = title ? `<h4 style="margin-bottom:0.5rem">${title}</h4><p>${message}</p>` : `<p>${message}</p>`;
-        const popupId = this.popup({ type: "alert", alertType: type, content: content, size: size, keyboard: false });
-        return popupId;
-    }
-
-    confirm(message, onConfirm, onCancel = null, size = "sm") {
-        const popupId = this.popup({ type: "confirm", content: message, size: size, onBeforeHide: (popupEl) => {
-            const confirmBtn = popupEl.querySelector('[data-polos="confirm"]');
-            const wasConfirmed = confirmBtn && (document.activeElement === confirmBtn || confirmBtn._wasClicked);
-            if (wasConfirmed && typeof onConfirm === 'function') onConfirm();
-            else if (!wasConfirmed && typeof onCancel === 'function') onCancel();
-        }});
-        return popupId;
-    }
-
-    // ==================== TOAST SYSTEM (MAXIMIZED) ====================
-    _getToastContainer(position = 'top-right') {
-        const containerClass = `${this.classes.toast.container} ${position}`;
-        let container = document.querySelector(`.${containerClass.replace(' ', '.')}`);
-        if (!container) {
-            container = document.createElement('div');
-            container.className = containerClass;
-            const positions = { 'top-right': { top: '20px', right: '20px' }, 'top-left': { top: '20px', left: '20px' }, 'bottom-right': { bottom: '20px', right: '20px' }, 'bottom-left': { bottom: '20px', left: '20px' }, 'top-center': { top: '20px', left: '50%', transform: 'translateX(-50%)' }, 'bottom-center': { bottom: '20px', left: '50%', transform: 'translateX(-50%)' } };
-            Object.assign(container.style, positions[position] || positions['top-right']);
-            container.style.position = 'fixed'; container.style.zIndex = '9999'; container.style.display = 'flex'; container.style.flexDirection = 'column'; container.style.gap = '10px';
-            document.body.appendChild(container);
+        getCurrentColumns() {
+            switch(this.currentScreen) {
+                case "large":
+                    return 12;
+                case "medium":
+                    return 8;
+                case "small":
+                default:
+                    return 4;
+            }
         }
-        return container;
-    }
 
-    toast(options = {}) {
-        if (typeof options === 'string') options = { message: options };
-        const opts = { message: '', type: 'info', title: '', timer: 3000, position: 'top-right', closeable: true, showProgressBar: true, icon: null, onClick: null, onClose: null, ...options };
-        if (!opts.message) { console.error('Polos Toast: Message is required.'); return null; }
-        
-        const toastId = this._generatePopupId('toast-');
-        const c = this.classes.toast;
-        const typeClass = c.types[opts.type] || c.types.info;
-        const iconClass = opts.icon || (opts.type === 'success' ? 'ti-circle-check' : opts.type === 'error' ? 'ti-circle-x' : opts.type === 'warning' ? 'ti-alert-triangle' : 'ti-info-circle');
-        const closeButtonHtml = opts.closeable ? `<button class="${c.closeButton}" data-polos-toast-close="${toastId}">&times;</button>` : '';
-        const progressBarHtml = opts.showProgressBar && opts.timer > 0 ? `<div class="${c.progressBar}"><div class="${c.progress}" style="animation-duration:${opts.timer}ms"></div></div>` : '';
-        const titleHtml = opts.title ? `<b>${opts.title}</b><br>` : '';
-        const html = `<div class="${c.wrapper} ${typeClass}" id="${toastId}" role="alert" aria-live="assertive"><i class="ti ${iconClass}"></i><div class="${c.content}">${titleHtml}${opts.message}</div>${closeButtonHtml}${progressBarHtml}</div>`;
-
-        const container = this._getToastContainer(opts.position);
-        container.insertAdjacentHTML('beforeend', html);
-        const toastElement = document.getElementById(toastId);
-        this.activeToasts.set(toastId, { element: toastElement, options: opts });
-
-        if (opts.onClick) { toastElement.style.cursor = 'pointer'; toastElement.addEventListener('click', () => { opts.onClick(toastElement); this.closeToast(toastId); }); }
-        if (opts.closeable) { toastElement.querySelector(`[data-polos-toast-close="${toastId}"]`).addEventListener('click', () => this.closeToast(toastId)); }
-        if (opts.timer > 0) {
-            toastElement.addEventListener('mouseenter', () => { const progressBar = toastElement.querySelector(`.${c.progress}`); if (progressBar) progressBar.style.animationPlayState = 'paused'; });
-            toastElement.addEventListener('mouseleave', () => { const progressBar = toastElement.querySelector(`.${c.progress}`); if (progressBar) progressBar.style.animationPlayState = 'running'; });
+        getScreenSize() { 
+            return this.currentScreen; 
         }
-        
-        let timeoutId = null;
-        if (opts.timer > 0) timeoutId = setTimeout(() => this.closeToast(toastId), opts.timer);
-        this.timeouts.set(toastId, timeoutId);
-        this.triggerEvent("toast:shown", { toastId, options: opts });
-        return toastId;
-    }
 
-    closeToast(toastId) {
-        const toastData = this.activeToasts.get(toastId);
-        if (!toastData) return;
-        const { element, options } = toastData;
-        if (this.timeouts.has(toastId)) { clearTimeout(this.timeouts.get(toastId)); this.timeouts.delete(toastId); }
-        element.style.animation = 'ptOut 0.3s ease-out forwards';
-        setTimeout(() => {
-            element.remove(); this.activeToasts.delete(toastId);
-            const container = element.parentElement; if (container && container.children.length === 0) container.remove();
-            if (options.onClose) options.onClose(element);
-            this.triggerEvent("toast:closed", { toastId, options });
-        }, 300);
-    }
-
-    toastSuccess(message, title = '', timer = 3000) { return this.toast({ message, title, timer, type: 'success' }); }
-    toastError(message, title = '', timer = 5000) { return this.toast({ message, title, timer, type: 'error' }); }
-    toastInfo(message, title = '', timer = 3000) { return this.toast({ message, title, timer, type: 'info' }); }
-    toastWarning(message, title = '', timer = 4000) { return this.toast({ message, title, timer, type: 'warning' }); }
-    closeAllToasts() { this.activeToasts.forEach((_, toastId) => this.closeToast(toastId)); }
-
-    // ==================== KEYBOARD SUPPORT (ENHANCED) ====================
-    _handleKeydown(event) {
-        if (event.key === "Escape" && this.activePopups.size > 0) {
-            const popups = Array.from(this.activePopups);
-            const topPopupId = popups[popups.length - 1];
-            const topPopup = document.getElementById(topPopupId);
-            if (topPopup && topPopup._popupOptions.keyboard !== false) this.closePopup(topPopupId);
+        refresh() { 
+            this.detectScreen(); 
         }
-    }
 
-    // ==================== CONFIRM ERROR FEEDBACK (ENHANCED) ====================
-    _showConfirmErrorFeedback(popupEl, error) {
-        const confirmButton = popupEl.querySelector('[data-polos="confirm"]');
-        if (confirmButton) {
-            const originalText = confirmButton.textContent; const originalClass = confirmButton.className;
-            confirmButton.textContent = "Error!"; confirmButton.className = this.classes.popup.button + "-danger"; confirmButton.disabled = true;
-            setTimeout(() => { if (confirmButton.parentNode) { confirmButton.textContent = originalText; confirmButton.className = originalClass; confirmButton.disabled = false; } }, 2000);
+        manageGrid(gridSelector, gridConfig) {
+            const grid = document.querySelector(gridSelector);
+            if (!grid) {
+                console.warn(`Polos: Grid "${gridSelector}" not found`);
+                return;
+            }
+
+            const items = grid.querySelectorAll('[class*="cs-"], [class*="cm-"], [class*="cl-"]');
+            items.forEach(el => {
+                el.classList.forEach(cls => { 
+                    if (/^(cs|cm|cl)-\d+$/.test(cls)) el.classList.remove(cls); 
+                });
+            });
+
+            const children = Array.from(grid.children)
+                .filter(child => child.nodeType === Node.ELEMENT_NODE);
+            
+            gridConfig.forEach((item, idx) => {
+                if (!item || idx >= children.length) return;
+                
+                const el = children[idx];
+                
+                const smallCols = item.small || item.xs;
+                const mediumCols = item.medium || item.sm;
+                const largeCols = item.large || item.md;
+                
+                if (largeCols >= 1 && largeCols <= 12) {
+                    el.classList.add("cl-" + largeCols);
+                } else if (largeCols !== undefined) {
+                    console.warn(`Polos: Invalid large column value (${largeCols}) for item ${idx + 1}. Must be between 1 and 12.`);
+                }
+                
+                if (mediumCols >= 1 && mediumCols <= 8) {
+                    el.classList.add("cm-" + mediumCols);
+                } else if (mediumCols !== undefined) {
+                    console.warn(`Polos: Invalid medium column value (${mediumCols}) for item ${idx + 1}. Must be between 1 and 8.`);
+                }
+                
+                if (smallCols >= 1 && smallCols <= 4) {
+                    el.classList.add("cs-" + smallCols);
+                } else if (smallCols !== undefined) {
+                    console.warn(`Polos: Invalid small column value (${smallCols}) for item ${idx + 1}. Must be between 1 and 4.`);
+                }
+            });
         }
-        this.triggerEvent("confirmError", { popupId: popupEl.id, error: error.message || error });
-    }
 
-    // ==================== DEBUG & INFO ====================
-    debug() {
-        return {
-            version: this.version, screenSize: this.currentScreenSize, columns: this.getCurrentColumns(),
-            observers: this.observers.length, activePopups: Array.from(this.activePopups),
-            staticPopups: Array.from(this.staticPopups), activeToasts: Array.from(this.activeToasts.keys()),
-            timeouts: Array.from(this.timeouts.keys()), initialized: this._isInitialized
-        };
-    }
+        show(selector) {
+            document.querySelectorAll(selector).forEach(el => {
+                const original = el.dataset.polosOriginalDisplay;
+                if (original) {
+                    el.style.display = original;
+                    delete el.dataset.polosOriginalDisplay;
+                    delete el.dataset.polosHiddenBy;
+                } else {
+                    el.style.display = '';
+                }
+            });
+        }
 
-    // ==================== CLEANUP (ENHANCED) ====================
-    destroy() {
-        this.closeAllPopups();
-        this.closeAllToasts();
-        this.timeouts.forEach((timeoutId) => clearTimeout(timeoutId));
-        this.timeouts.clear();
-        if (this._resizeTimeout) { clearTimeout(this._resizeTimeout); this._resizeTimeout = null; }
-        const polosAttributes = ['data-polos-original-display', 'data-polos-hidden-by', 'data-polos-loading-text', 'data-polos-grid-processed'];
-        polosAttributes.forEach(attr => { document.querySelectorAll(`[${attr}]`).forEach(el => el.removeAttribute(attr)); });
-        this.observers = []; this.activePopups.clear(); this.staticPopups.clear(); this.activeToasts.clear();
-        if (window.Polos === this) { window.Polos = null; }
-        this._isInitialized = false;
-    }
+        hide(selector) {
+            document.querySelectorAll(selector).forEach(el => {
+                if (!el.dataset.polosOriginalDisplay) {
+                    el.dataset.polosOriginalDisplay = window.getComputedStyle(el).display;
+                    el.dataset.polosHiddenBy = 'polos';
+                }
+                el.style.display = "none";
+            });
+        }
 
-    // ==================== RE-INIT PROTECTION (ENHANCED) ====================
-    reinit() {
-        if (this._isInitialized) { console.warn("Polos: Already initialized. Destroying first..."); this.destroy(); }
-        console.log("Polos: Re-initializing..."); this.init(); return true;
-    }
+        showOn(selector, breakpoint) {
+            const cssBreakpoint = this._jsToCssBreakpoint(breakpoint);
+            if (!cssBreakpoint) {
+                console.warn(`Polos: Invalid breakpoint "${breakpoint}". Use: small/medium/large or xs/sm/md`);
+                return;
+            }
+            
+            this._addResponsiveElement(selector, cssBreakpoint, 'show');
+        }
 
-    // ==================== INITIALIZATION (ENHANCED) ====================
-    init() {
-        if (this._isInitialized) {
-            console.error("Polos: Already initialized! Use .reinit() to force re-initialization.");
+        hideOn(selector, breakpoint) {
+            const cssBreakpoint = this._jsToCssBreakpoint(breakpoint);
+            if (!cssBreakpoint) {
+                console.warn(`Polos: Invalid breakpoint "${breakpoint}". Use: small/medium/large or xs/sm/md`);
+                return;
+            }
+            
+            this._addResponsiveElement(selector, cssBreakpoint, 'hide');
+        }
+
+        setLoading(selector, isLoading, text = "") {
+            document.querySelectorAll(selector).forEach(el => {
+                if (isLoading) { 
+                    el.classList.add(this.classes.loading); 
+                    if (text) el.dataset.polosLoadingText = text; 
+                } else { 
+                    el.classList.remove(this.classes.loading); 
+                    delete el.dataset.polosLoadingText;
+                }
+            });
+        }
+
+        enhance(selector) {
+            document.querySelectorAll(selector).forEach(el => { 
+                el.classList.add(this.classes.interactive); 
+            });
+        }
+
+        showModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (!modal) {
+                console.error(`Polos: Modal #${modalId} not found`);
+                return false;
+            }
+
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            this.activeModals.add(modalId);
+
+            return true;
+        }
+
+        hideModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (!modal) {
+                console.warn(`Polos: Modal #${modalId} not found during hide`);
+                return false;
+            }
+
+            modal.classList.remove('active');
+            this.activeModals.delete(modalId);
+
+            if (this.activeModals.size === 0) {
+                document.body.style.overflow = '';
+            }
+
+            this._cleanupModalResources(modalId);
+
+            return true;
+        }
+
+        toggleModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (!modal) {
+                console.error(`Polos: Modal #${modalId} not found for toggle`);
+                return false;
+            }
+
+            if (modal.classList.contains('active')) {
+                return this.hideModal(modalId);
+            } else {
+                return this.showModal(modalId);
+            }
+        }
+
+        closeAllModals() {
+            this.activeModals.forEach(modalId => this.hideModal(modalId));
+        }
+
+        toast(message, options = {}) {
+            const opts = {
+                duration: options.duration || this.defaults.toastDuration,
+                type: options.type || 'info',
+                title: options.title || '',
+                position: options.position || 'top-right',
+                closable: options.closable !== undefined ? options.closable : true,
+                ...options
+            };
+
+            const toastId = 'toast-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+            
+            const toastHTML = `
+                <div class="toast ${opts.type} ${opts.position}" id="${toastId}">
+                    <div class="toast-content">
+                        ${opts.title ? `<strong>${opts.title}</strong><br>` : ''}
+                        ${message}
+                    </div>
+                    ${opts.closable ? 
+                        `<button type="button" class="toast-close" data-polos-dismiss="toast">&times;</button>` 
+                        : ''}
+                    ${opts.duration > 0 ? 
+                        `<div class="toast-bar">
+                            <div class="toast-progress" style="animation-duration: ${opts.duration}ms"></div>
+                        </div>` 
+                        : ''}
+                </div>
+            `;
+
+            let container = document.querySelector('.toast-container');
+            if (!container) {
+                container = document.createElement('div');
+                container.className = 'toast-container';
+                document.body.appendChild(container);
+            }
+
+            container.insertAdjacentHTML('beforeend', toastHTML);
+            const toastEl = document.getElementById(toastId);
+
+            if (opts.duration > 0) {
+                const timeout = setTimeout(() => {
+                    this._removeToast(toastId);
+                }, opts.duration);
+                this.timeouts.set(toastId, timeout);
+            }
+
+            if (opts.duration > 0) {
+                const handleMouseEnter = () => {
+                    const progress = toastEl.querySelector('.toast-progress');
+                    if (progress) progress.style.animationPlayState = 'paused';
+                };
+                
+                const handleMouseLeave = () => {
+                    const progress = toastEl.querySelector('.toast-progress');
+                    if (progress) progress.style.animationPlayState = 'running';
+                };
+                
+                toastEl.addEventListener('mouseenter', handleMouseEnter);
+                toastEl.addEventListener('mouseleave', handleMouseLeave);
+                
+                this._toastData.set(toastId, {
+                    element: toastEl,
+                    listeners: [
+                        { type: 'mouseenter', handler: handleMouseEnter },
+                        { type: 'mouseleave', handler: handleMouseLeave }
+                    ]
+                });
+            }
+
+            this.activeToasts.add(toastId);
+            return toastId;
+        }
+
+        _getAnimationDuration(animationString) {
+            const match = animationString.match(/(\d+(?:\.\d+)?)s/);
+            return match ? parseFloat(match[1]) * 1000 : 300;
+        }
+
+        _removeToast(toastId) {
+            if (this.timeouts.has(toastId)) {
+                clearTimeout(this.timeouts.get(toastId));
+                this.timeouts.delete(toastId);
+            }
+            
+            if (this._toastData.has(toastId)) {
+                const toastData = this._toastData.get(toastId);
+                toastData.listeners?.forEach(({ type, handler }) => {
+                    if (toastData.element) {
+                        toastData.element.removeEventListener(type, handler);
+                    }
+                });
+                this._toastData.delete(toastId);
+            }
+            
+            const toast = document.getElementById(toastId);
+            if (!toast) return;
+
+            toast.style.animation = this.defaults.toastRemoveAnimation;
+            const duration = this._getAnimationDuration(this.defaults.toastRemoveAnimation);
+            
+            setTimeout(() => {
+                if (toast.parentNode) {
+                    toast.parentNode.removeChild(toast);
+                }
+                this.activeToasts.delete(toastId);
+            }, duration);
+        }
+
+        _removeAllToasts() {
+            this.activeToasts.forEach(toastId => this._removeToast(toastId));
+        }
+
+        success(message, options = {}) {
+            return this.toast(message, { ...options, type: 'success' });
+        }
+
+        error(message, options = {}) {
+            return this.toast(message, { ...options, type: 'error' });
+        }
+
+        info(message, options = {}) {
+            return this.toast(message, { ...options, type: 'info' });
+        }
+
+        warning(message, options = {}) {
+            return this.toast(message, { ...options, type: 'warning' });
+        }
+
+        alert(message, title = "Alert", options = {}) {
+            const modalId = 'alert-' + Date.now();
+            const closeOnBackdrop = options.closeOnBackdrop !== undefined ? options.closeOnBackdrop : this.defaults.closeOnBackdrop;
+            
+            const modalHTML = `
+                <div class="popup" id="${modalId}" ${!closeOnBackdrop ? 'data-polos-backdrop="static"' : ''}>
+                    <div class="pop pop-sm">
+                        <div class="pop-bd" style="text-align: center; padding: 2rem;">
+                            <p style="margin: 0 0 1rem 0;">${message}</p>
+                            <button class="btn btn-primary" data-polos-dismiss="modal" style="min-width: 80px;">OK</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+            this._setupModalAutoRemoval(modalId);
+            this.showModal(modalId);
+            return modalId;
+        }
+
+        confirm(message, onConfirm, onCancel = null, options = {}) {
+            const modalId = 'confirm-' + Date.now();
+            const closeOnBackdrop = options.closeOnBackdrop !== undefined ? options.closeOnBackdrop : this.defaults.closeOnBackdrop;
+            
+            const modalHTML = `
+                <div class="popup" id="${modalId}" ${!closeOnBackdrop ? 'data-polos-backdrop="static"' : ''}>
+                    <div class="pop pop-sm">
+                        <div class="pop-bd" style="text-align: center; padding: 2rem;">
+                            <p style="margin: 0 0 1.5rem 0;">${message}</p>
+                            <div style="display: flex; gap: 0.5rem; justify-content: center;">
+                                <button class="btn btn-secondary" data-polos-dismiss="modal" id="cancel-btn-${modalId}">Cancel</button>
+                                <button class="btn btn-primary" id="confirm-btn-${modalId}">OK</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+            
+            const setupButtons = () => {
+                const confirmBtn = document.getElementById(`confirm-btn-${modalId}`);
+                const cancelBtn = document.getElementById(`cancel-btn-${modalId}`);
+                
+                if (confirmBtn) {
+                    const confirmHandler = () => {
+                        if (onConfirm) onConfirm();
+                        this.hideModal(modalId);
+                    };
+                    confirmBtn.addEventListener('click', confirmHandler);
+                    this._storeModalButtonListener(modalId, confirmBtn, 'click', confirmHandler);
+                }
+                
+                if (cancelBtn) {
+                    const cancelHandler = () => {
+                        if (onCancel) onCancel();
+                        this.hideModal(modalId);
+                    };
+                    cancelBtn.addEventListener('click', cancelHandler);
+                    this._storeModalButtonListener(modalId, cancelBtn, 'click', cancelHandler);
+                }
+            };
+            
+            if (document.getElementById(modalId)) {
+                setupButtons();
+            } else {
+                requestAnimationFrame(setupButtons);
+            }
+            
+            this._setupModalAutoRemoval(modalId);
+            this.showModal(modalId);
+            return modalId;
+        }
+
+        modal(options = {}) {
+            const modalId = options.id || 'modal-' + Date.now();
+            const size = options.size || 'md';
+            const title = options.title || '';
+            const content = options.content || '';
+            const footer = options.footer || '';
+            const closeOnBackdrop = options.closeOnBackdrop !== undefined ? options.closeOnBackdrop : this.defaults.closeOnBackdrop;
+            const staticBackdrop = options.staticBackdrop || !closeOnBackdrop;
+            
+            const modalHTML = `
+                <div class="popup" id="${modalId}" ${staticBackdrop ? 'data-polos-backdrop="static"' : ''}>
+                    <div class="pop ${this.classes.modal.sizePrefix}${size}">
+                        ${title ? `
+                        <div class="${this.classes.modal.header}">
+                            <h5 class="${this.classes.modal.title}">${title}</h5>
+                            <button class="${this.classes.modal.closeButton}" data-polos-dismiss="modal">&times;</button>
+                        </div>
+                        ` : ''}
+                        <div class="${this.classes.modal.body}">
+                            ${content}
+                        </div>
+                        ${footer ? `
+                        <div class="${this.classes.modal.footer}">
+                            ${footer}
+                        </div>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+            
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+            this._setupModalAutoRemoval(modalId);
+            this.showModal(modalId);
+            
+            return modalId;
+        }
+
+        _storeModalButtonListener(modalId, element, event, handler) {
+            if (!this._modalButtonListeners.has(modalId)) {
+                this._modalButtonListeners.set(modalId, []);
+            }
+            this._modalButtonListeners.get(modalId).push({ element, event, handler });
+        }
+
+        _cleanupModalResources(modalId) {
+            if (this._modalObservers.has(modalId)) {
+                this._modalObservers.get(modalId).disconnect();
+                this._modalObservers.delete(modalId);
+            }
+            
+            if (this._modalButtonListeners.has(modalId)) {
+                this._modalButtonListeners.get(modalId).forEach(({ element, event, handler }) => {
+                    if (element && element.removeEventListener) {
+                        element.removeEventListener(event, handler);
+                    }
+                });
+                this._modalButtonListeners.delete(modalId);
+            }
+        }
+
+        _setupModalAutoRemoval(modalId) {
+            const modal = document.getElementById(modalId);
+            if (!modal) return;
+
+            const observer = new MutationObserver(() => {
+                if (!modal.classList.contains('active')) {
+                    setTimeout(() => {
+                        if (modal.parentNode) {
+                            modal.parentNode.removeChild(modal);
+                        }
+                        this._cleanupModalResources(modalId);
+                    }, this.defaults.modalRemoveDelay);
+                }
+            });
+            
+            observer.observe(modal, { attributes: true, attributeFilter: ['class'] });
+            this._modalObservers.set(modalId, observer);
+        }
+
+        popup(options = {}) {
+            if (options.type === 'alert') {
+                return this.alert(options.content || '', options.title || 'Alert', {
+                    closeOnBackdrop: options.closeOnBackdrop
+                });
+            } else if (options.type === 'confirm') {
+                return this.confirm(
+                    options.content || '',
+                    options.onConfirm,
+                    options.onCancel || options.onClose,
+                    { closeOnBackdrop: options.closeOnBackdrop }
+                );
+            } else if (options.type === 'toast') {
+                return this.toast(options.content || '', { 
+                    duration: options.duration,
+                    type: options.toastType || 'info'
+                });
+            } else {
+                return this.modal(options);
+            }
+        }
+
+        openPopup(popupId) {
+            return this.showModal(popupId);
+        }
+
+        closePopup(popupId) {
+            const el = document.getElementById(popupId);
+            if (el && el.classList.contains('popup')) {
+                return this.hideModal(popupId);
+            } else if (el && el.classList.contains('toast')) {
+                return this._removeToast(popupId);
+            }
             return false;
         }
-        
-        this.detectScreenSize();
-        
-        // --- INITIALIZATION FOR STATIC POPUPS ---
-        document.querySelectorAll('.popup').forEach(popupEl => {
-            if (!popupEl.id) { console.warn('Polos: Static popup found without an ID. Assigning a random ID.', popupEl); popupEl.id = this._generatePopupId('static-'); }
-            this.staticPopups.add(popupEl.id);
-            const opts = { title: "", content: "", size: "md", backdrop: true, keyboard: true, focus: true, onBeforeShow: null, onShown: null, onBeforeHide: null, onHidden: null, };
-            for (const key in opts) {
-                const dataAttr = `polos${key.charAt(0).toUpperCase() + key.slice(1)}`;
-                if (popupEl.dataset[dataAttr] !== undefined) {
-                    if (typeof opts[key] === 'boolean') opts[key] = popupEl.dataset[dataAttr] !== 'false';
-                    else opts[key] = popupEl.dataset[dataAttr];
-                }
-            }
-            popupEl._popupOptions = opts;
-            const existingCloseBtn = popupEl.querySelector('.pop-close');
-            if (existingCloseBtn && !existingCloseBtn.dataset.polos) existingCloseBtn.dataset.polos = 'close';
-        });
 
-        // --- EVENT LISTENERS ---
-        const handleResize = () => { if (this._resizeTimeout) clearTimeout(this._resizeTimeout); this._resizeTimeout = setTimeout(() => { this.detectScreenSize(); }, 100); };
-        window.addEventListener("resize", handleResize);
-        const handleKeydown = (e) => this._handleKeydown(e);
-        window.addEventListener("keydown", handleKeydown);
-        
-        const handleClick = (event) => {
-            // Handle static popup trigger
-            const popupTrigger = event.target.closest('[data-polos-popup]');
-            if (popupTrigger) {
-                const targetSelector = popupTrigger.dataset.polosPopup;
-                if (targetSelector) {
-                    const popupEl = document.querySelector(targetSelector);
-                    if (popupEl) { popupEl._triggerElement = popupTrigger; this.openPopup(targetSelector.replace("#", "")); }
-                }
-                return;
-            }
-            // Handle toast close button
-            const toastCloseBtn = event.target.closest('[data-polos-toast-close]');
-            if (toastCloseBtn) {
-                this.closeToast(toastCloseBtn.dataset.polosToastClose);
-                return;
-            }
-            // Handle other data-polos actions
-            const trigger = event.target.closest('[data-polos]');
-            if (!trigger) return;
-            const action = trigger.dataset.polos;
-            try {
-                switch (action) {
-                    case "close": const popupToClose = trigger.closest("." + this.classes.popup.wrapper); if (popupToClose) { this.closePopup(popupToClose.id); } break;
-                    case "confirm": const popupToConfirm = trigger.closest("." + this.classes.popup.wrapper); if (popupToConfirm) { trigger._wasClicked = true; this.closePopup(popupToConfirm.id); } break;
-                    case "toggle-class": if (trigger.dataset.polosTarget && trigger.dataset.polosClass) { document.querySelectorAll(trigger.dataset.polosTarget).forEach(target => { target.classList.toggle(trigger.dataset.polosClass); }); } break;
-                }
-            } catch (error) { console.error("Polos: Error handling data attribute", error); }
-        };
-        document.addEventListener("click", handleClick);
-        
-        const handleBeforeUnload = () => { this.closeAllPopups(); this.closeAllToasts(); };
-        window.addEventListener("beforeunload", handleBeforeUnload);
+        closeAllPopups() {
+            this.closeAllModals();
+            this._removeAllToasts();
+        }
 
-        this.triggerEvent("initialized", { version: this.version, timestamp: new Date().toISOString() });
-        this._isInitialized = true;
-        return true;
+        destroy() {
+            this.closeAllModals();
+            this._removeAllToasts();
+            
+            this.timeouts.forEach(timeout => clearTimeout(timeout));
+            this.timeouts.clear();
+            
+            this._modalButtonListeners.forEach((listeners, modalId) => {
+                this._cleanupModalResources(modalId);
+            });
+            this._modalButtonListeners.clear();
+            
+            this._removeAllEventListeners();
+            
+            if (this._resizeTimeout) {
+                clearTimeout(this._resizeTimeout);
+                this._resizeTimeout = null;
+            }
+            
+            this._toastData.clear();
+            this._responsiveElements.clear();
+            
+            const attributes = ['data-polos-original-display', 'data-polos-hidden-by', 'data-polos-loading-text'];
+            attributes.forEach(attr => {
+                document.querySelectorAll(`[${attr}]`).forEach(el => {
+                    el.removeAttribute(attr);
+                });
+            });
+            
+            this.activeModals.clear();
+            this.activeToasts.clear();
+            this._boundMethods.clear();
+            
+            if (global.Polos === this) {
+                global.Polos = null;
+            }
+            
+            this._isInitialized = false;
+            console.log("Polos v" + this.version + ": Cleaned up successfully");
+        }
+
+        debug() {
+            return {
+                version: this.version,
+                screen: this.currentScreen,
+                columns: this.getCurrentColumns(),
+                activeModals: Array.from(this.activeModals),
+                activeToasts: Array.from(this.activeToasts),
+                breakpoints: Object.keys(this.breakpoints),
+                responsiveElements: this._responsiveElements.size,
+                modalButtonListeners: this._modalButtonListeners.size,
+                initialized: this._isInitialized
+            };
+        }
     }
-}
 
-// ==================== GLOBAL INSTANCE (ENHANCED) ====================
-if (!window.Polos) {
-    window.Polos = new Polos();
-    console.log(`Polos JS v${window.Polos.version} (Final) initialized`);
-} else {
-    console.warn("Polos: Instance already exists. Using existing instance.");
-    console.warn("Polos: Use window.Polos.reinit() to force re-initialization.");
-}
-const PolosInstance = window.Polos;
+    if (!global.Polos) {
+        global.Polos = new Polos();
+    }
 
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = Polos;
-}
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => {
+            if (global.Polos && !global.Polos._isInitialized) {
+                global.Polos.init();
+            }
+        });
+    } else {
+        if (global.Polos && !global.Polos._isInitialized) {
+            global.Polos.init();
+        }
+    }
+
+    if (typeof module !== 'undefined' && module.exports) {
+        module.exports = Polos;
+    }
+
+})(typeof window !== 'undefined' ? window : this);
