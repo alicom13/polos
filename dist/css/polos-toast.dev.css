@@ -1,0 +1,142 @@
+/* =================================================== */
+/* POLOS JS - TOAST COMPONENT (VERSI PERBAIKAN) */
+/* =================================================== */
+
+/* --------------------------------------------------- */
+/* 1. CONTAINER: Penampung utama untuk tumpukan toast   */
+/* --------------------------------------------------- */
+.toast-container {
+    position: fixed;
+    z-index: 9999;
+    
+    /* Gunakan Flexbox untuk menumpuk toast dengan rapi */
+    display: flex;
+    flex-direction: column;
+    gap: 10px; /* Jarak antar toast */
+
+    /* Biarkan klik menembus container agar tidak menghalangi interaksi */
+    pointer-events: none;
+}
+
+/* --------------------------------------------------- */
+/* 2. POSISI CONTAINER: Tentukan di mana tumpukan muncul */
+/* --------------------------------------------------- */
+.toast-container.top-right { top: 20px; right: 20px; align-items: flex-end; }
+.toast-container.top-left { top: 20px; left: 20px; align-items: flex-start; }
+.toast-container.bottom-right { bottom: 20px; right: 20px; align-items: flex-end; }
+.toast-container.bottom-left { bottom: 20px; left: 20px; align-items: flex-start; }
+.toast-container.top-center { top: 20px; left: 50%; transform: translateX(-50%); align-items: center; }
+.toast-container.bottom-center { bottom: 20px; left: 50%; transform: translateX(-50%); align-items: center; }
+
+/* --------------------------------------------------- */
+/* 3. TOAST: Elemen pesan individual                     */
+/* --------------------------------------------------- */
+.toast {
+    /* PERBAIKAN: Posisi relatif terhadap container */
+    position: relative; 
+    
+    /* Hapus positioning lama agar tidak bentrok */
+    top: auto;
+    right: auto;
+    bottom: auto;
+    left: auto;
+    
+    /* Aktifkan kembali klik pada elemen toast (tombol close, dll.) */
+    pointer-events: auto;
+    
+    /* Style tampilan dasar */
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 10px 25px rgba(0,0,0,.15);
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-left: 4px solid;
+    font-family: system-ui, sans-serif;
+    max-width: 350px;
+    
+    /* Animasi masuk */
+    animation: .3s ease-out toastIn;
+}
+
+/* --------------------------------------------------- */
+/* 4. VARIAN TOAST: Warna untuk setiap jenis pesan      */
+/* --------------------------------------------------- */
+.toast.success { border-color: #16a34a; background: #f0fdf4; }
+.toast.error   { border-color: #dc2626; background: #fef2f2; }
+.toast.info    { border-color: #2563eb; background: #eff6ff; }
+.toast.warning { border-color: #d97706; background: #fffbeb; }
+
+/* --------------------------------------------------- */
+/* 5. KOMPONEN DALAM TOAST                              */
+/* --------------------------------------------------- */
+.toast-content {
+    flex: 1;
+    font-size: 14px;
+    color: #374151;
+}
+
+.toast-close {
+    background: none;
+    border: none;
+    color: #9ca3af;
+    cursor: pointer;
+    font-size: 18px;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+.toast-close:hover {
+    background: #f3f4f6;
+    color: #374151;
+}
+
+/* --------------------------------------------------- */
+/* 6. PROGRESS BAR: Indikator durasi otomatis            */
+/* --------------------------------------------------- */
+.toast-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    border-radius: 0 0 8px 8px;
+    overflow: hidden;
+}
+
+.toast-progress {
+    height: 100%;
+    width: 100%;
+    animation: linear forwards toastBar;
+    /* PERBAIKAN: Fallback durasi jika JS gagal */
+    animation-duration: 5s; 
+    transform-origin: left;
+}
+.toast:hover .toast-progress {
+    animation-play-state: paused;
+}
+
+/* Warna progress bar sesuai variannya */
+.toast.success .toast-progress { background: #16a34a; }
+.toast.error   .toast-progress { background: #dc2626; }
+.toast.info    .toast-progress { background: #2563eb; }
+.toast.warning .toast-progress { background: #d97706; }
+
+
+/* --------------------------------------------------- */
+/* 7. ANIMASI                                           */
+/* --------------------------------------------------- */
+@keyframes toastIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes toastOut {
+    from { opacity: 1; transform: translateY(0); }
+    to   { opacity: 0; transform: translateY(-20px); }
+}
+
+@keyframes toastBar {
+    from { transform: scaleX(1); }
+    to   { transform: scaleX(0); }
+}
